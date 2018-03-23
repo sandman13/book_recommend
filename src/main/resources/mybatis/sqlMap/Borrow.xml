@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--设置名字空间-->
+<mapper namespace="songyutong">
+
+    <!--设置返回结果集,将数据库字段和java对象字段建立联系,type是java对象路径,id是结果集的唯一标识-->
+    <resultMap type="BorrowDO" id="BORROW">
+        <!--数据库是主键用id标签,非主键用result标签,column是数据库的字段名,property是java对象的字段名-->
+        <id column="borrow_id" jdbcType="BIGINT" property="borrowId"/>
+        <result column="book_id" jdbcType="BIGINT" property="bookId"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="borrow_date" jdbcType="TIMESTAMP" property="borrowDate"/>
+        <result column="back_date" jdbcType="TIMESTAMP" property="backDate"/>
+        <result column="borrow_status" jdbcType="VARCHAR" property="borrowStatus"/>
+        <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified"/>
+        <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate"/>
+        <result column="modifier" jdbcType="VARCHAR" property="modifier"/>
+        <result column="goal" jdbcType="INTEGER" property="goal"/>
+    </resultMap>
+
+    <insert id="addBorrowRecord" parameterType="book.domain.dataobject.BorrowDO" useGeneratedKeys="true" keyProperty="borrowId">
+        INSERT INTO borrow(book_id,user_id,borrow_date,back_date,borrow_status,gmt_modified,gmt_create,modifier) VALUES(#{bookId},#{userId},#{borrowDate},#{backDate},#{borrowStatus},CURRENT_TIMESTAMP ,CURRENT_TIMESTAMP ,#{modifier})
+    </insert>
+
+    <select id="listByUserId" parameterType="book.domain.dataobject.BorrowDO" resultMap="BORROW">
+        SELECT * FROM borrow where user_id=#{userId} and borrow_status!='DELETED'
+    </select>
+
+
+    <select id="queryByBorrowId" parameterType="long" resultMap="BORROW">
+        SELECT * FROM borrow where borrow_status!='DELETED' and borrow_id=#{borrowId}
+    </select>
+
+    <update id="updateByBorrowId" parameterType="book.domain.dataobject.BorrowDO">
+        UPDATE borrow SET borrow_date=#{borrowDate},gmt_modified=CURRENT_TIMESTAMP ,goal=#{goal} where borrow_id=#{borrowId}
+    </update>
+
+    <select id="listAllBorrows" resultMap="BORROW">
+        SELECT * FROM  borrow where borrow_status!='DELETED'
+    </select>
+
+
+
+</mapper>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/task
+       http://www.springframework.org/schema/task/spring-task.xsd">
+    <!--查找使用构造型注解所标注的类,如@Component(组件)以及子类@Service（服务）,@Controller（控制器）,@Repository（数据仓库）-->
+    <context:component-scan base-package="book.controller"/>
+    <context:component-scan base-package="book.service"/>
+    <context:component-scan base-package="book.dao"/>
+    <context:component-scan base-package="book.task"/>
+
+    <!-- 开启SpringMVC注解模式 -->
+    <mvc:annotation-driven/>
+
+    <!--DefaultServletHttpRequestHandler 对于进入DispatcherServlet的URL进行筛查,如果是静态资源的请求,就将该请求转由WEB应用默认的servlet处理-->
+    <mvc:default-servlet-handler/>
+
+    <!-- 配置视图路径的前缀和后缀-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <task:annotation-driven/>
+    <!--系统启动先执行一次,之后每间隔60秒执行一次-->
+    <bean id="myRecommendaction" class="book.task.MyRecommendation" init-method="recommend"></bean>
+    <task:scheduled-tasks>
+
+        <task:scheduled ref="myRecommendaction" method="recommend" cron="*/60 * * * * ?" />
+
+    </task:scheduled-tasks>
+</beans>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--设置名字空间-->
+<mapper namespace="songyutong">
+
+    <!--设置返回结果集,将数据库字段和java对象字段建立联系,type是java对象路径,id是结果集的唯一标识-->
+    <resultMap type="BookDO" id="BOOK">
+        <!--数据库是主键用id标签,非主键用result标签,column是数据库的字段名,property是java对象的字段名-->
+        <id column="book_id" jdbcType="BIGINT" property="bookId"/>
+        <result column="book_name" jdbcType="VARCHAR" property="bookName"/>
+        <result column="author" jdbcType="VARCHAR" property="author"/>
+        <result column="publisher" jdbcType="VARCHAR" property="publisher"/>
+        <result column="introduction" jdbcType="VARCHAR" property="introduction"/>
+        <result column="book_status" jdbcType="VARCHAR" property="bookStatus"/>
+        <result column="pubdate" jdbcType="TIMESTAMP" property="pubdate"/>
+        <result column="location" jdbcType="VARCHAR" property="location"/>
+        <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified"/>
+        <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate"/>
+        <result column="modifier" jdbcType="VARCHAR" property="modifier"/>
+    </resultMap>
+
+    <select id="listAllBooks" resultMap="BOOK">
+    SELECT * FROM book where book_status!='DELETED'
+</select>
+
+    <select id="listBooksByName" resultMap="BOOK">
+        SELECT * FROM book where book_status!='DELETED' and book_name like #{bookName}
+    </select>
+
+    <select id="listBooksByAuthor" resultMap="BOOK">
+        SELECT * FROM book where book_status!='DELETED' and author like #{author}
+    </select>
+
+    <select id="listBooksByNameAndAuthor" resultMap="BOOK">
+        SELECT * FROM book where book_status!='DELETED' and book_name=#{bookName} and author=#{author}
+    </select>
+
+    <select id="queryBookById" resultMap="BOOK">
+        SELECT * FROM book where book_status!='DELETED' and book_id=#{bookId}
+    </select>
+
+    <update id="updateBookById" parameterType="book.domain.dataobject.BookDO" keyProperty="">
+         UPDATE book set book_name=#{bookName},author=#{author},publisher=#{publisher},introduction=#{introduction},book_status=#{bookStatus},pubdate=#{pubdate},location=#{location},gmt_modified=CURRENT_TIMESTAMP ,modifier=#{modifier} where book_id=#{bookId}
+    </update>
+
+</mapper>

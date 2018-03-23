@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--设置名字空间-->
+<mapper namespace="recommend">
+
+    <!--设置返回结果集,将数据库字段和java对象字段建立联系,type是java对象路径,id是结果集的唯一标识-->
+    <resultMap type="RecommendationDO" id="RECOMMEND">
+        <!--数据库是主键用id标签,非主键用result标签,column是数据库的字段名,property是java对象的字段名-->
+        <id column="recommend_id" jdbcType="BIGINT" property="recommendId"/>
+        <result column="book_name" jdbcType="VARCHAR" property="bookName"/>
+        <result column="author" jdbcType="VARCHAR" property="author"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified"/>
+        <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate"/>
+        <result column="modifier" jdbcType="VARCHAR" property="modifier"/>
+    </resultMap>
+
+    <insert id="addRecommendation" parameterType="book.domain.dataobject.RecommendationDO" useGeneratedKeys="true" keyProperty="recommendId">
+        INSERT INTO recommend(book_name,author,user_id,gmt_modified,gmt_create,modifier) VALUES(#{bookName},#{author},#{userId},CURRENT_TIMESTAMP ,CURRENT_TIMESTAMP ,#{modifier})
+    </insert>
+
+    <select id="listByUserId" parameterType="long" resultMap="RECOMMEND">
+        SELECT  * FROM  recommend where user_id=#{userId}
+    </select>
+
+    <delete id="deleteAll">
+        DELETE  FROM recommend
+    </delete>
+
+</mapper>
