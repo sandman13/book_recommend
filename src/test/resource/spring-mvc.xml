@@ -30,12 +30,5 @@
         <property name="suffix" value=".jsp"/>
     </bean>
 
-    <task:annotation-driven/>
-    <!--系统启动先执行一次,之后每间隔60秒执行一次-->
-    <bean id="myRecommendaction" class="book.task.MyRecommendation" init-method="recommend"></bean>
-    <task:scheduled-tasks>
 
-        <task:scheduled ref="myRecommendaction" method="recommend" cron="*/60 * * * * ?" />
-
-    </task:scheduled-tasks>
 </beans>

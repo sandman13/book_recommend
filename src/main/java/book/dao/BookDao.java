@@ -40,10 +40,18 @@ public interface BookDao {
     BookDO queryBookByBookId(long bookId);
 
     /**
-     * 更新书籍信息
+     * 管理员更新书籍信息
      * @param bookDO
      * @return
      */
     long updateBookByBookId(BookDO bookDO);
 
+    /**
+     * 管理员添加书籍
+     * @param bookDO
+     * @return
+     */
+    long insertBook(BookDO bookDO);
+
+    long deleteBook(long bookId);
 }

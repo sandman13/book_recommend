@@ -1,7 +1,9 @@
 package book.service.impl;
 
 import book.dao.BookDao;
+import book.domain.Enum.StatusEnum;
 import book.domain.dataobject.BookDO;
+import book.domain.dataobject.UserDO;
 import book.domain.dto.BookDTO;
 import book.service.BookInfoService;
 import book.util.DateUtils;
@@ -39,6 +41,13 @@ public class BookInfoServiceImpl implements BookInfoService {
     }
 
     @Override
+    public List<BookDTO> AdminListAllBooks() {
+         LoggerUtil.info(LOGGER,"enter in BookInfoService[AdminListAllBooks]");
+         List<BookDO> bookDOList=bookDao.listAllBooks();
+         return AdminconvertDOsTODTOs(bookDOList);
+    }
+
+    @Override
     public List<BookDTO> listBooksByConditions(String conditions) {
         LoggerUtil.info(LOGGER, "enter in BookInfoService[listBooksByConditions],conditions:{0}", conditions);
         conditions= StringUtils.isEmpty(conditions)?" ":'%'+conditions+'%';
@@ -60,9 +69,48 @@ public class BookInfoServiceImpl implements BookInfoService {
         }
         return bookDTOList;
     }
+    @Override
+     public boolean updateBookByBookId(BookDTO bookDTO)
+    {
+        long id=bookDao.updateBookByBookId(convertDTOTODO(bookDTO));
+        return id>0;
+    }
+
+    @Override
+    public boolean insertBook(BookDTO bookDTO) {
+        long id=bookDao.insertBook(convertDTOTODO(bookDTO));
+        return id>0;
+    }
+
+    @Override
+    public boolean deleteBook(long bookId) {
+        long id=bookDao.deleteBook(bookId);
+        return id>0;
+    }
 
     /**
-     * DO集合转DTO集合
+     * DTO对象转DO对象
+     * @param bookDTO
+     * @return
+     */
+    private BookDO convertDTOTODO(BookDTO bookDTO)
+    {
+        BookDO bookDO=new BookDO();
+        bookDO.setBookId(bookDTO.getBookId());
+        bookDO.setBookName(bookDTO.getBookName());
+        bookDO.setAuthor(bookDTO.getAuthor());
+        bookDO.setPublisher(bookDTO.getPublisher());
+        bookDO.setIntroduction(bookDTO.getIntroduction());
+        bookDO.setPubdate(DateUtils.parse(bookDTO.getPubdate()));
+        bookDO.setGmtCreate(DateUtils.parse(bookDTO.getGmtCreate()));
+        bookDO.setGmtModified(DateUtils.parse(bookDTO.getGmtModified()));
+        bookDO.setModifier(bookDTO.getModifier());
+        bookDO.setBookStatus(StatusEnum.CAN_BORROW.name());
+        bookDO.setLocation(bookDTO.getLocation());
+        return bookDO;
+    }
+    /**
+     * 普通用户下DO集合转DTO集合
      *
      * @param bookDOList
      * @return
@@ -92,7 +140,7 @@ public class BookInfoServiceImpl implements BookInfoService {
     }
 
     /**
-     * DO集合转DTO集合
+     * DO转DTO
      *
      * @param bookDO
      * @return
@@ -111,5 +159,21 @@ public class BookInfoServiceImpl implements BookInfoService {
         bookDTO.setPublisher(bookDO.getPublisher());
         bookDTO.setLocation(bookDO.getLocation());
         return bookDTO;
+    }
+
+    /**
+     * 管理员下DO集合转DTO集合
+     * @param bookDOList
+     * @return
+     */
+    private List<BookDTO> AdminconvertDOsTODTOs(List<BookDO> bookDOList)
+    {
+        List<BookDTO> bookDTOList = Lists.newArrayList();
+        for (BookDO bookDO : bookDOList)
+        {
+            BookDTO bookDTO = convertDOTODTO(bookDO);
+            bookDTOList.add(bookDTO);
+        }
+        return bookDTOList;
     }
 }

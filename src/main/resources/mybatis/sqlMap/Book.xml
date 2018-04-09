@@ -41,8 +41,15 @@
         SELECT * FROM book where book_status!='DELETED' and book_id=#{bookId}
     </select>
 
-    <update id="updateBookById" parameterType="book.domain.dataobject.BookDO" keyProperty="">
+    <update id="updateBookById" parameterType="book.domain.dataobject.BookDO">
          UPDATE book set book_name=#{bookName},author=#{author},publisher=#{publisher},introduction=#{introduction},book_status=#{bookStatus},pubdate=#{pubdate},location=#{location},gmt_modified=CURRENT_TIMESTAMP ,modifier=#{modifier} where book_id=#{bookId}
     </update>
 
+    <insert id="insertBook" parameterType="book.domain.dataobject.BookDO">
+        INSERT INTO book(book_id,book_name,author,publisher,introduction,book_status,pubdate,location,gmt_modified,gmt_create,modifier) VALUES (#{bookId},#{bookName},#{author},#{publisher},#{introduction},#{bookStatus},#{pubdate},#{location},CURRENT_TIMESTAMP ,CURRENT_TIMESTAMP ,#{modifier})
+    </insert>
+
+    <delete id="deleteBook" parameterType="long">
+        UPDATE book SET book_status='DELETED' WHERE book_id=#{bookId}
+    </delete>
 </mapper>

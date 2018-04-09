@@ -36,6 +36,11 @@ public class LoginController {
 
     @RequestMapping(value = "/login/check", method = RequestMethod.POST)
     @ResponseBody
+    /**
+     *该注解用于将Controller的方法返回的对象，通过适当的HttpMessageConverter转换为指定格式后，
+     * 写入到Response对象的body数据区。
+     使用时机：返回的数据不是html标签的页面，而是其他某种格式的数据时（如json、xml等）使用；
+     */
     public SimpleResult<String> loginCheck(String username, String password, HttpSession httpSession) {
         LoggerUtil.info(LOGGER, "enter in LoginController[LoginCheck],username:{0},password:{1}", username, password);
         //如果用户名密码存在则参考返回类型

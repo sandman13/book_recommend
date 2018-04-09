@@ -29,4 +29,7 @@
         SELECT  * FROM user where user_status!='DELETED'
     </select>
 
+    <insert id="insertUser"  parameterType="book.domain.dataobject.UserDO" useGeneratedKeys="true" keyProperty="userId">
+        INSERT INTO user(username,password,user_status,gmt_modified,gmt_create,modifier) VALUES (#{username},#{password},#{userStatus},CURRENT_TIMESTAMP ,CURRENT_TIMESTAMP ,#{modifier})
+    </insert>
 </mapper>

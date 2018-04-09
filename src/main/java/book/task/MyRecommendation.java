@@ -294,6 +294,6 @@ public class MyRecommendation {
                 RecommendDO recommendDO = iterator.next();
                 denominatorRight = denominatorRight + (recommendDORecommendDOMapB.get(recommendDO).getRate() - averageB) * (recommendDORecommendDOMapB.get(recommendDO).getRate() - averageB);
             }
-            return molecule / denominatorLeft * denominatorRight;
+            return molecule /Math.sqrt( denominatorLeft * denominatorRight);
         }
     }

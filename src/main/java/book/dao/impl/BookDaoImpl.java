@@ -71,4 +71,16 @@ public class BookDaoImpl extends CommonDao implements BookDao {
         LoggerUtil.info(LOGGER,"enter in BookDaoImpl[updateBookByBookId],bookDO:{0}",bookDO);
         return getSqlSession().update("songyutong.updateBookById",bookDO);
     }
+
+    @Override
+    public long insertBook(BookDO bookDO) {
+        LoggerUtil.info(LOGGER,"enter in BookDaoImpl[insertBook],bookDO{0}",bookDO);
+        return getSqlSession().insert("songyutong.insertBook",bookDO);
+    }
+
+    @Override
+    public long deleteBook(long bookId) {
+        LoggerUtil.info(LOGGER,"enter in BookDaoImpl[deleteBook],bookId{0}",bookId);
+        return getSqlSession().delete("songyutong.deleteBook",bookId);
+    }
 }

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--这边是关联的schema文件,当需要使用相应的标签就需要引入对应的schema文件约束,在xmlns中配置,在schemaLocation配置两个地址,注意第二个地址可以省略版本号,版本号和pom里面的定义一致-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd"
+       default-autowire="byName">
+
+    <!--读取数据库的配置文件,之后可以使用占位符的方式-->
+    <context:property-placeholder location="classpath:db.properties"/>
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <!--初始化连接大小-->
+        <property name="initialSize" value="${jdbc.initialSize}"/>
+        <!--设置最大活跃连接数-->
+        <property name="maxActive" value="${jdbc.maxActive}"/>
+        <!--设置最大空闲连接数,一般接近最大活跃连接数,因为超过最大空闲连接数剩余的连接会自动销毁,无法起到数据库连接池的作用-->
+        <property name="maxIdle" value="${jdbc.maxIdle}"/>
+        <!--设置最小空闲连接数-->
+        <property name="minIdle" value="${jdbc.minIdle}"/>
+        <!--设置最大超时时间-->
+        <property name="maxWait" value="${jdbc.maxWait}"/>
+        <!--解决mysql8小时问题-->
+        <property name="testOnBorrow" value="${jdbc.testOnBorrow}"/>
+        <property name="validationQuery" value="${jdbc.validationQuery}"/>
+    </bean>
+    <!-- spring和MyBatis整合，可以省略mybatis的配置映射文件 -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--设置数据源,这里使用dbcp的数据库连接池-->
+        <property name="dataSource" ref="dataSource"/>
+        <!--这里设置mybatis数据源配置(不是必须的,先留着吧)-->
+        <property name="configLocation" value="classpath:mybatis/configuration.xml"/>
+        <!-- 自动扫描mapping.xml映射文件-->
+         <property name="mapperLocations" value="classpath:mybatis/sqlMap/*.xml"/>
+    </bean>
+    <!--配置事务管理器-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!--配置事务模板,之后可以使用编程式事务方式-->
+    <bean id="transactionTemplate"
+          class="org.springframework.transaction.support.TransactionTemplate">
+        <property name="transactionManager" ref="transactionManager"/>
+    </bean>
+    <!--默认线程池-->
+    <bean id="defaultEventHandlerExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <property name="corePoolSize" value="5"/>
+        <property name="maxPoolSize" value="20"/>
+        <property name="queueCapacity" value="50"/>
+    </bean>
+</beans>

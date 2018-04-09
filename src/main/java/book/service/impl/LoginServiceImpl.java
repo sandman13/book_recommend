@@ -36,7 +36,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     /**
-     * 用户DO对象转DTOd对象
+     * 用户DO对象转DTO对象
      *
      * @param userDO
      * @return

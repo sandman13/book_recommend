@@ -15,4 +15,6 @@ public interface UserDao {
      UserDO queryByUserId(long userId);
 
      List<UserDO> listAllUsers();
+
+     long insertUser(UserDO userDO);
 }
