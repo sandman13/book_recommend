@@ -102,8 +102,6 @@ public class BookInfoServiceImpl implements BookInfoService {
         bookDO.setPublisher(bookDTO.getPublisher());
         bookDO.setIntroduction(bookDTO.getIntroduction());
         bookDO.setPubdate(DateUtils.parse(bookDTO.getPubdate()));
-        bookDO.setGmtCreate(DateUtils.parse(bookDTO.getGmtCreate()));
-        bookDO.setGmtModified(DateUtils.parse(bookDTO.getGmtModified()));
         bookDO.setModifier(bookDTO.getModifier());
         bookDO.setBookStatus(StatusEnum.CAN_BORROW.name());
         bookDO.setLocation(bookDTO.getLocation());
