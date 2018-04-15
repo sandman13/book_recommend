@@ -51,13 +51,27 @@ public class UserDaoImpl extends CommonDao implements UserDao {
 
     @Override
     public List<UserDO> listAllUsers() {
-        LoggerUtil.info(LOGGER,"enter in UserDaoImpl[listAllUSers]");
+        LoggerUtil.info(LOGGER,"enter in UserDaoImpl[listAllUsers]");
         return getSqlSession().selectList("songyutong.listAllUsers");
     }
 
     @Override
     public long insertUser(UserDO userDO) {
+        LoggerUtil.info(LOGGER,"enter in UserDaoImpl[insertUser],userDo:{0}",userDO);
         long id=getSqlSession().insert("songyutong.insertUser",userDO);
         return userDO.getUserId();
+    }
+
+    @Override
+    public long updateUser(UserDO userDO) {
+        LoggerUtil.info(LOGGER,"enter in UserDaoImpl[updateUser],userDo:{0}",userDO);
+        long id=getSqlSession().update("songyutong.updateUser",userDO);
+        return userDO.getUserId();
+    }
+
+    @Override
+    public long deleteUser(long userId) {
+        LoggerUtil.info(LOGGER,"enter in UserDaoImpl[deleteUser],userId{0}",userId);
+        return getSqlSession().delete("songyutong.deleteUser",userId);
     }
 }

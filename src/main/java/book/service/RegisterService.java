@@ -1,5 +1,7 @@
 package book.service;
 
+import book.domain.dto.UserDTO;
+
 public interface RegisterService {
-    boolean insertUser(String username,String password);
+    boolean insertUser(UserDTO userDTO);
 }

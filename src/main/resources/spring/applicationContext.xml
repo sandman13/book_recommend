@@ -54,4 +54,12 @@
         <property name="maxPoolSize" value="20"/>
         <property name="queueCapacity" value="50"/>
     </bean>
+
+    <bean id="ossClient" class="book.task.OSS">
+        <constructor-arg name="endPoint" value="oss-cn-beijing.aliyuncs.com"></constructor-arg>
+        <constructor-arg name="accessKeyId" value="LTAIXNMJPUiZ1XQ8"></constructor-arg>
+        <constructor-arg name="accessKeySecret" value="HZcnz70aCM6M6tdzn5KhwS04Ht5pkL"></constructor-arg>
+        <constructor-arg name="bucketName" value="book-recommendation-photo"></constructor-arg>
+    </bean>
+
 </beans>

@@ -6,6 +6,7 @@ import book.domain.dataobject.BookDO;
 import book.domain.dataobject.UserDO;
 import book.domain.dto.BookDTO;
 import book.service.BookInfoService;
+import book.task.OSS;
 import book.util.DateUtils;
 import book.util.LoggerUtil;
 import com.google.common.base.Joiner;
@@ -32,6 +33,9 @@ public class BookInfoServiceImpl implements BookInfoService {
 
     @Resource(name = "bookDao")
     private BookDao bookDao;
+
+    @Resource(name = "ossClient")
+    private OSS oss;
 
     @Override
     public List<BookDTO> listAllBooks() {
@@ -72,6 +76,7 @@ public class BookInfoServiceImpl implements BookInfoService {
     @Override
      public boolean updateBookByBookId(BookDTO bookDTO)
     {
+
         long id=bookDao.updateBookByBookId(convertDTOTODO(bookDTO));
         return id>0;
     }
@@ -167,10 +172,11 @@ public class BookInfoServiceImpl implements BookInfoService {
     private List<BookDTO> AdminconvertDOsTODTOs(List<BookDO> bookDOList)
     {
         List<BookDTO> bookDTOList = Lists.newArrayList();
-        for (BookDO bookDO : bookDOList)
-        {
-            BookDTO bookDTO = convertDOTODTO(bookDO);
-            bookDTOList.add(bookDTO);
+        if(!CollectionUtils.isEmpty(bookDOList)) {
+            for (BookDO bookDO : bookDOList) {
+                BookDTO bookDTO = convertDOTODTO(bookDO);
+                bookDTOList.add(bookDTO);
+            }
         }
         return bookDTOList;
     }

@@ -10,11 +10,15 @@ import java.util.List;
  */
 public interface UserDao {
 
-     List<UserDO> queryByUserNameAndPassword(String usernmae, String password);
+     List<UserDO> queryByUserNameAndPassword(String username, String password);
 
      UserDO queryByUserId(long userId);
 
      List<UserDO> listAllUsers();
 
      long insertUser(UserDO userDO);
+
+     long updateUser(UserDO userDO);
+
+     long deleteUser(long userId);
 }

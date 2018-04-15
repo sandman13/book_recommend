@@ -1,5 +1,6 @@
 package book.controller;
 
+import book.domain.dto.UserDTO;
 import book.service.RegisterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 
 /**
  * @author hui zhang
@@ -23,10 +25,10 @@ public class RegisterController {
     private RegisterService registerService;
     private static final Logger LOGGER= LoggerFactory.getLogger(RegisterController.class);
     @RequestMapping(value = "/register")
-    public String Register(String username,String password)
+    public String Register(HttpSession httpSession, UserDTO userDTO)
     {
 
-        if(registerService.insertUser(username,password))
+        if(registerService.insertUser(userDTO))
             return "redirect:/login";
         else
             return "redirect:/toRegister";

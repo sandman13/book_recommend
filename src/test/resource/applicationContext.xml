@@ -37,7 +37,7 @@
         <!--这里设置mybatis数据源配置(不是必须的,先留着吧)-->
         <property name="configLocation" value="classpath:mybatis/configuration.xml"/>
         <!-- 自动扫描mapping.xml映射文件-->
-         <property name="mapperLocations" value="classpath:mybatis/sqlMap/*.xml"/>
+        <property name="mapperLocations" value="classpath:mybatis/sqlMap/*.xml"/>
     </bean>
     <!--配置事务管理器-->
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
@@ -54,4 +54,12 @@
         <property name="maxPoolSize" value="20"/>
         <property name="queueCapacity" value="50"/>
     </bean>
+
+    <bean id="ossClient" class="book.task.OSS">
+        <constructor-arg name="endPoint" value="oss-cn-beijing.aliyuncs.com"></constructor-arg>
+        <constructor-arg name="accessKeyId" value="LTAIXNMJPUiZ1XQ8"></constructor-arg>
+        <constructor-arg name="accessKeySecret" value="HZcnz70aCM6M6tdzn5KhwS04Ht5pkL"></constructor-arg>
+        <constructor-arg name="bucketName" value="book-recommendation-photo"></constructor-arg>
+    </bean>
+
 </beans>

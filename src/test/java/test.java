@@ -1,7 +1,10 @@
 import book.controller.AdminController;
 import book.domain.dataobject.BookDO;
 import book.domain.dto.BookDTO;
+import book.domain.dto.UserDTO;
 import book.service.BookInfoService;
+import book.service.RegisterService;
+import book.service.UserService;
 import com.google.common.collect.Lists;
 import org.junit.Assert;
 import org.junit.Test;
@@ -19,21 +22,27 @@ import java.util.List;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"classpath:/applicationContext.xml","classpath:/spring-mvc.xml"})
 public class test {
+    @Resource(name = "UserService")
+   private UserService userService;
 
-    @Resource(name = "bookInfoService")
-   private BookInfoService bookInfoService;
+    @Resource(name ="RegisterService")
+    private RegisterService registerService;
     @Test
-    public void testAdd(){
-        BookDTO bookDTO=new BookDTO();
-        bookDTO.setAuthor("啊哈");
-        bookDTO.setBookName("数据结构");
-        bookDTO.setIntroduction("计算机相关");
-        bookDTO.setGmtCreate("2016-10-10 11:00:00");
-        bookDTO.setGmtModified("2017-10-10 12:00:00");
-        bookDTO.setPubdate("2017-05-10 09:00:00");
-      Assert.assertTrue(bookInfoService.insertBook(bookDTO));
-        List<BookDTO> bookDTOList=bookInfoService.AdminListAllBooks();
-      Assert.assertTrue(bookDTOList.get(bookDTOList.size()-1).getAuthor().equals("啊哈"));
+    public void testAdd() {
+       /* UserDTO userDTO = new UserDTO();
+        userDTO.setUserId(133);
+
+        userDTO.setEmail("zh268262441@126.com");
+        userDTO.setUsername("Flora");
+        userDTO.setPassword("456");
+        userDTO.setPhoneNumber("15861813969");
+        userDTO.setGmtCreate("2018-01-01 14:00:00");
+        userDTO.setGmtModified("2018-01-10 15:00:00");
+        */
+        //Assert.assertTrue(userService.updateUser(userDTO));
+
+        Assert.assertTrue(userService.deleteUser(133));
     }
+
 
 }

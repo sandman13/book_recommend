@@ -18,6 +18,7 @@
         <result column="location" jdbcType="VARCHAR" property="location"/>
         <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified"/>
         <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate"/>
+        <result column="photo_url"  jdbcType="VARCHAR" property="photoUrl"/>
         <result column="modifier" jdbcType="VARCHAR" property="modifier"/>
     </resultMap>
 

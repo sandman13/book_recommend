@@ -34,6 +34,16 @@ public class BookDTO extends BaseObject {
 
     private String location;
 
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
+    private String photoUrl;
+
     /**
      * 库存
      */

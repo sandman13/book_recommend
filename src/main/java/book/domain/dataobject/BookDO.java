@@ -22,6 +22,16 @@ public class BookDO extends BaseObject {
 
     private String location;
 
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
+    private String photoUrl;
+
     /**
      * 出版日期
      */
