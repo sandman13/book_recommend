@@ -72,8 +72,8 @@
         <div>
             <ul class="nav navbar-nav">
                 <li class="active"><a href="/admin/index">书籍管理</a></li>
-                <li ><a href="/admin/management/user">用户管理</a></li>
-                <li><a href="/admin/management/order">订阅管理</a></li>
+                <li ><a href="/admin/user">用户管理</a></li>
+                <li><a href="/admin/order">订阅管理</a></li>
             </ul>
         </div>
         <div class="pull-right">
@@ -108,7 +108,7 @@
     <div class="form-group">
         <label class="col-sm-2 control-label">出版社</label>
         <div class="col-sm-3">
-            <input type="text" class="form-control" name="bookNmae" placeholder="书名">
+            <input type="text" class="form-control" name="publisher" placeholder="出版社">
         </div>
         <label class="col-sm-2 control-label">作者</label>
         <div class="col-sm-3">
@@ -133,11 +133,12 @@
 <div class="col-sm-10 col-md-offset-1">
     <div class="well">
         <table class="table table-hover table-bordered table-striped">
-            <caption>书籍信息详情<div class="pull-right"><input type="button" value="新增用户信息" class="btn btn-success" data-toggle="modal" data-target="#myModal"></div></caption>
+            <caption>书籍信息详情<div class="pull-right"><input type="button" value="新增书籍信息" class="btn btn-success" data-toggle="modal" data-target="#myModal"></div></caption>
             <thead>
             <tr>
                 <th>书名</th>
                 <th>作者</th>
+                <th>图片</th>
                 <th>介绍</th>
                 <th>地点</th>
                 <th>出版日期</th>
@@ -157,6 +158,7 @@
                 </td>
                 <td class="col-md-1"><%= bookDTO.getAuthor()%>
                 </td>
+                <td class="col-md-1"><img src="<% if (bookDTO.getPhotoUrl()!=null) out.println(bookDTO.getPhotoUrl()); else out.println("https://video-spring.oss-cn-beijing.aliyuncs.com/timg%20%281%29.gif");%>"></td>
                 <!--TODO 后台控制字数-->
                 <td class="col-md-3"><% if  (bookDTO.getIntroduction()!=null) out.println(bookDTO.getIntroduction()); %>
                 </td>
@@ -165,13 +167,13 @@
                 <td class="col-md-1"><% if (bookDTO.getPubdate()!=null) out.println(bookDTO.getPubdate()); %>
                 </td>
                 <td class="col-md-1"><% if (bookDTO.getPublisher()!=null) out.println(bookDTO.getPublisher()); %></td>
-                <td class="col-md-2"><a href="/admin/delete/book/<%=bookDTO.getBookId()%>"><input type="button" value="删除" class="btn btn-danger"/></a>&nbsp&nbsp<input type="button" value="修改" class="btn btn-info"  data-toggle="modal" data-target="#<%=bookDTO.getBookId()%>"/>
+                <td class="col-md-1"><a href="/admin/delete/book/<%=bookDTO.getBookId()%>"><input type="button" value="删除" class="btn btn-danger"/></a><input type="button" value="修改" class="btn btn-info"  data-toggle="modal" data-target="#<%=bookDTO.getBookId()%>"/>
 
 
                     <div class="modal fade" id="<%=bookDTO.getBookId()%>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
-                                <form class="form"  class="form-horizontal" role="form" action="/admin/update" method="post">
+                                <form class="form"  class="form-horizontal" role="form" action="/admin/update" method="post" enctype="multipart/form-data">
                                     <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                                             &times;
@@ -222,6 +224,12 @@
                                                 <input class="form-control" name="publisher" placeholder="出版商" type="text">
                                             </div>
                                         </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">图片</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" name="multipartFile" placeholder="书籍图片" type="file">
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-default" data-dismiss="modal">关闭
@@ -249,7 +257,7 @@
         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    <form class="form" role="form"  class="form-horizontal" action="/admin/insert" method="post">
+                    <form class="form" role="form"  class="form-horizontal" action="/admin/insert" method="post" enctype="multipart/form-data">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                                 &times;
@@ -293,6 +301,12 @@
                                 <label class="col-sm-2 control-label">出版商</label>
                                 <div class="col-sm-10">
                                     <input class="form-control" name="publisher" placeholder="出版商" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">图片</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" name="multipartFile" placeholder="书籍图片" type="file">
                                 </div>
                             </div>
                         </div>

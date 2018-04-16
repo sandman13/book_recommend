@@ -148,7 +148,7 @@ public class AdminController {
         }
         return "error";
     }
-    @RequestMapping(value = "/admin/listUser")
+    @RequestMapping(value = "/admin/user")
     public String listAllUsers(HttpSession httpSession,Model model)
     {
         BaseResult result=new BaseResult();
@@ -161,7 +161,7 @@ public class AdminController {
            List<UserDTO> userDTOList= userService.listAllUsers();
             model.addAttribute("userList",userDTOList);
             result.setSuccess(true);
-            return "user";
+            return "admin_user";
         }catch(BusinessException be){
             ExceptionHandler.handleBusinessException(LOGGER,result,be,"展示所有用户失败");
         }catch(Exception e){
@@ -170,6 +170,7 @@ public class AdminController {
         return "error";
     }
 
+    @RequestMapping(value = "/admin/delete/user/{UserId}")
     public String deleteUser(HttpSession httpSession,@PathVariable long UserId)
     {
         BaseResult result=new BaseResult();
@@ -181,7 +182,7 @@ public class AdminController {
             }
             userService.deleteUser(UserId);
             result.setSuccess(true);
-            return "redirect:/admin/listUser";
+            return "redirect:/admin/user";
         }catch(BusinessException be){
             ExceptionHandler.handleBusinessException(LOGGER,result,be,"删除用户失败");
         }catch(Exception e){

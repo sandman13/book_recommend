@@ -61,8 +61,6 @@ public class UserServiceImpl implements UserService {
         userDO.setUsername(userDTO.getUsername());
         userDO.setPassword(userDTO.getPassword());
         userDO.setEmail(userDTO.getEmail());
-        userDO.setGmtCreate(DateUtils.parse(userDTO.getGmtCreate()));
-        userDO.setGmtModified(DateUtils.parse(userDTO.getGmtModified()));
         userDO.setModifier(userDTO.getModifier());
         userDO.setPhoneNumber(userDTO.getPhoneNumber());
         return userDO;

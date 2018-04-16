@@ -78,6 +78,7 @@
                     <thead>
                     <tr>
                         <th>书名</th>
+                        <th>图片</th>
                         <th>详情</th>
                         <th>地址</th>
                         <th>状态</th>
@@ -88,6 +89,14 @@
                     <c:forEach var="book" items="${bookList}">
                         <tr>
                             <td>${book.bookName}</td>
+                            <c:choose>
+                            <c:when test="${book.photoUrl!=null}">
+                            <td><img src="${book.photoUrl}" width="35px" height="50px"></td>
+                            </c:when>
+                            <c:otherwise>
+                                <td><img src="https://video-spring.oss-cn-beijing.aliyuncs.com/timg.png" width="35px" height="50px"></td>
+                            </c:otherwise>
+                            </c:choose>
                             <td>${book.introduction}</td>
                             <td>${book.location}</td>
                             <c:choose>
