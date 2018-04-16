@@ -9,6 +9,8 @@ import book.service.UserService;
 import book.task.OSS;
 import book.util.ExceptionHandler;
 import book.util.LoggerUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -16,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -39,21 +42,23 @@ public class AdminController {
     private OSS oss;
     /**
      * 管理员下展示所有书籍
+     * url支持参数为空和提供参数两种情况
      * @param httpSession
      * @param model
      * @return
      */
-    @RequestMapping(value = "/admin/index",method = RequestMethod.GET)
-    public String listAllBooks(HttpSession httpSession, Model model) {
+    @RequestMapping(value ="/admin/index",method = RequestMethod.GET)
+    public String listAllBooks(HttpSession httpSession, Model model,@RequestParam(required = false,value = "page",defaultValue = "1") Integer page) {
         BaseResult result=new BaseResult();
+        System.out.println(page);
         try {
             LoggerUtil.info(LOGGER, "enter in AdminController[listAllBooks]");
             UserDTO userDTO = (UserDTO) httpSession.getAttribute("isLogin");
             if (userDTO == null) {
                 return "redirect:/login";
             }
-            List<BookDTO> bookDTOList = bookInfoService.AdminListAllBooks();
-            model.addAttribute("bookDTOList",bookDTOList);
+            PageInfo<BookDTO> pageInfo = bookInfoService.AdminListAllBooks(page);
+            model.addAttribute("page",pageInfo);
             model.addAttribute("userDTO",userDTO);
             result.setSuccess(true);
             return "admin_index";

@@ -3,12 +3,14 @@ package book.service.impl;
 import book.dao.BookDao;
 import book.domain.Enum.StatusEnum;
 import book.domain.dataobject.BookDO;
-import book.domain.dataobject.UserDO;
 import book.domain.dto.BookDTO;
+import book.domain.result.PageResult;
 import book.service.BookInfoService;
 import book.task.OSS;
 import book.util.DateUtils;
 import book.util.LoggerUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -40,14 +42,29 @@ public class BookInfoServiceImpl implements BookInfoService {
     @Override
     public List<BookDTO> listAllBooks() {
         LoggerUtil.info(LOGGER, "enter in BookInfoService[listAllBooks]");
-        List<BookDO> bookDOList = bookDao.listAllBooks();
+        List<BookDO> bookDOList= bookDao.listAllBooks();
         return convertDOsTODTOs(bookDOList);
+    }
+
+    @Override
+    public PageInfo<BookDTO> AdminListAllBooks(int page) {
+        LoggerUtil.info(LOGGER,"enter in BookInfoService[AdminListAllBooks],page:{0}",page);
+        PageInfo<BookDO> bookDOPageInfo=bookDao.listAllBooksWithPage(page);
+        PageInfo<BookDTO>bookDTOPageInfo=new PageInfo<>();
+        bookDTOPageInfo.setList(convertDOsTODTOs(bookDOPageInfo.getList()));
+        bookDTOPageInfo.setPrePage(bookDOPageInfo.getPrePage());
+        bookDTOPageInfo.setNextPage(bookDOPageInfo.getNextPage());
+        bookDTOPageInfo.setHasNextPage(bookDOPageInfo.isHasNextPage());
+        bookDTOPageInfo.setHasPreviousPage(bookDOPageInfo.isHasPreviousPage());
+        bookDTOPageInfo.setPages(bookDOPageInfo.getPages());
+        bookDTOPageInfo.setPageNum(bookDOPageInfo.getPageNum());
+        return bookDTOPageInfo;
     }
 
     @Override
     public List<BookDTO> AdminListAllBooks() {
          LoggerUtil.info(LOGGER,"enter in BookInfoService[AdminListAllBooks]");
-         List<BookDO> bookDOList=bookDao.listAllBooks();
+         List<BookDO>bookDOList=bookDao.listAllBooks();
          return AdminconvertDOsTODTOs(bookDOList);
     }
 

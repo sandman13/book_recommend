@@ -1,6 +1,7 @@
 package book.dao;
 
 import book.domain.dataobject.BookDO;
+import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 
@@ -10,6 +11,16 @@ import java.util.List;
  */
 public interface BookDao {
 
+    /**
+     * 分页接口
+     * @return
+     */
+    PageInfo<BookDO> listAllBooksWithPage(int pageNumber);
+
+    /**
+     * 展示所有图书
+     * @return
+     */
     List<BookDO> listAllBooks();
 
     /**

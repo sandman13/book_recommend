@@ -76,6 +76,9 @@
                 <li><a href="/admin/user">用户管理</a></li>
                 <li><a href="/admin/order">订阅管理</a></li>
             </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span>&nbsp退出</a></li>
+            </ul>
         </div>
         <div class="pull-right">
             <form class="navbar-form navbar-left" role="search">

@@ -1,6 +1,7 @@
 package book.service;
 
 import book.domain.dto.BookDTO;
+import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 
@@ -13,6 +14,8 @@ public interface BookInfoService {
     List<BookDTO>listAllBooks();
 
     List<BookDTO>AdminListAllBooks();
+
+    PageInfo<BookDTO> AdminListAllBooks(int page);
 
     List<BookDTO> listBooksByConditions(String conditions);
 
