@@ -62,10 +62,6 @@ public class OSS {
         }catch (BusinessException ex){
             LoggerUtil.error(ex,LOGGER,"上传文件失败,ossKey:{0}",ossKey);
             return false;
-        }finally {
-            if (ossClient!=null) {
-                ossClient.shutdown();
-            }
         }
     }
 

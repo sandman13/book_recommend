@@ -110,6 +110,7 @@ public class BookInfoServiceImpl implements BookInfoService {
         bookDO.setModifier(bookDTO.getModifier());
         bookDO.setBookStatus(StatusEnum.CAN_BORROW.name());
         bookDO.setLocation(bookDTO.getLocation());
+        bookDO.setPhotoUrl(bookDTO.getPhotoUrl());
         return bookDO;
     }
     /**
@@ -161,6 +162,7 @@ public class BookInfoServiceImpl implements BookInfoService {
         bookDTO.setPubdate(DateUtils.format(bookDO.getPubdate()));
         bookDTO.setPublisher(bookDO.getPublisher());
         bookDTO.setLocation(bookDO.getLocation());
+        bookDTO.setPhotoUrl(bookDO.getPhotoUrl());
         return bookDTO;
     }
 

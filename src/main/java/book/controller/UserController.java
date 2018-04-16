@@ -27,18 +27,17 @@ public class UserController {
     private static final org.slf4j.Logger LOGGER= LoggerFactory.getLogger(UserController.class);
 
     @RequestMapping(value = "/user/update")
-    public String updateUser(HttpSession httpSession,UserDTO userDTO){
+    public String updateUser(HttpSession httpSession,UserDTO myuserDTO){
         BaseResult result = new BaseResult();
         try {
             LoggerUtil.info(LOGGER, "enter in UserController[updateUser]");
-            userDTO = (UserDTO) httpSession.getAttribute("isLogin");
+            UserDTO userDTO = (UserDTO) httpSession.getAttribute("isLogin");
             if (userDTO == null) {
                 return "redirect:/login";
             }
-
-            userService.updateUser(userDTO);
+            userService.updateUser(myuserDTO);
             result.setSuccess(true);
-            return "redirect:/login";
+            return "redirect:/admin/user";
         } catch (BusinessException be) {
             ExceptionHandler.handleBusinessException(LOGGER, result, be, "更新用户信息失败");
         } catch (Exception e) {
