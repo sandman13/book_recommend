@@ -10,6 +10,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="book.domain.dto.BookDTO" %>
 <%@ page import="java.util.List" %>
+<%@ page import="com.github.pagehelper.PageInfo" %>
 
 
 <html>
@@ -74,6 +75,9 @@
                 <li class="active"><a href="/admin/index">书籍管理</a></li>
                 <li ><a href="/admin/user">用户管理</a></li>
                 <li><a href="/admin/order">订阅管理</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span>&nbsp退出</a></li>
             </ul>
         </div>
         <div class="pull-right">
@@ -148,9 +152,9 @@
             </thead>
             <tbody>
             <%
-                List<BookDTO> bookDTOList = (List<BookDTO>) request.getAttribute("bookDTOList");
-                if (bookDTOList!=null){
-                    for (BookDTO bookDTO:bookDTOList){
+                PageInfo<BookDTO> pageInfo = (PageInfo<BookDTO>) request.getAttribute("page");
+                if (pageInfo!=null){
+                    for (BookDTO bookDTO:pageInfo.getList()){
 
             %>
             <tr>
@@ -329,6 +333,29 @@
 
 
     </div>
+    <!--分页-->
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <li>
+                <a href="/admin/index?page=<%= pageInfo.getPrePage() %>" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <% for (int i=0;i<pageInfo.getPages();i++){
+                 if (pageInfo.getPageNum()==i+1){
+            %>
+            <li class="active"><a href="/admin/index?page=<%= i+1 %>"><%= i+1 %></a></li>
+            <%}else {%>
+            <li><a href="/admin/index?page=<%= i+1 %>"><%= i+1 %></a></li>
+            <% }} %>
+            <li>
+                <a href="/admin/index?page=<%= pageInfo.getNextPage()%>" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
 </div>
 
 </body>

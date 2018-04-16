@@ -4,6 +4,8 @@ import book.dao.BookDao;
 import book.dao.CommonDao;
 import book.domain.dataobject.BookDO;
 import book.util.LoggerUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +23,18 @@ public class BookDaoImpl extends CommonDao implements BookDao {
 
     private static final Logger LOGGER= LoggerFactory.getLogger(BookDaoImpl.class);
     @Override
+    public PageInfo<BookDO> listAllBooksWithPage(int pageNumber) {
+        LoggerUtil.info(LOGGER,"enter in BookDaoImpl[listAllBooks]");
+        PageHelper.startPage(pageNumber,8);
+        List<BookDO> bookDOList = getSqlSession().selectList("songyutong.listAllBooks");
+        PageInfo<BookDO> pageInfo=new PageInfo<>(bookDOList);
+        return pageInfo;
+    }
+
+    @Override
     public List<BookDO> listAllBooks() {
         LoggerUtil.info(LOGGER,"enter in BookDaoImpl[listAllBooks]");
-        return getSqlSession().selectList("songyutong.listAllBooks");
+        return  getSqlSession().selectList("songyutong.listAllBooks");
     }
 
     @Override
