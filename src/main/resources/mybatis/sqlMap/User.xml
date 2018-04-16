@@ -42,4 +42,8 @@
     <delete id="deleteUser" parameterType="long">
         UPDATE user SET user_status='DELETED' WHERE user_id=#{userId}
     </delete>
+
+    <select id="queryByName" resultMap="USER">
+        SELECT * FROM user WHERE user_status!='DELETED'AND username=#{username}
+    </select>
 </mapper>

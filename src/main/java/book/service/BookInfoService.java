@@ -26,4 +26,6 @@ public interface BookInfoService {
     boolean insertBook(BookDTO bookDTO);
 
     boolean deleteBook(long bookId);
+
+    List<BookDTO> queryByMultiConditions(String publisher,String introduction,String author,String location);
 }

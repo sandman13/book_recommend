@@ -53,4 +53,12 @@
     <delete id="deleteBook" parameterType="long">
         UPDATE book SET book_status='DELETED' WHERE book_id=#{bookId}
     </delete>
+
+    <select id="queryByMultiConditions" parameterType="map" resultMap="BOOK">
+        SELECT * FROM book WHERE book_status!='DELETED'
+        <if test="publisher!=null">AND publisher LIKE #{publisher}</if>
+        <if test="introduction!=null">AND introduction LIKE #{introduction}</if>
+        <if test="author!=null">AND author LIKE #{author}</if>
+        <if test="location!=null">AND location LIKE #{location}</if>
+    </select>
 </mapper>

@@ -10,4 +10,6 @@ public interface UserService {
     List<UserDTO> listAllUsers();
 
     boolean deleteUser(long UserId);
+
+    List<UserDTO> queryByName(String username);
 }

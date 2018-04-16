@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -93,5 +94,16 @@ public class BookDaoImpl extends CommonDao implements BookDao {
     public long deleteBook(long bookId) {
         LoggerUtil.info(LOGGER,"enter in BookDaoImpl[deleteBook],bookId{0}",bookId);
         return getSqlSession().delete("songyutong.deleteBook",bookId);
+    }
+
+    @Override
+    public List<BookDO> queryByMultiConditions(String publisher, String introduction, String author, String location) {
+        LoggerUtil.info(LOGGER,"enter in BookDaoImpl[queryByMultiConditions],publisher:{0} introduction {1} author:{2} location:{3}",publisher,introduction,author,location);
+        Map<String,String> map= Maps.newHashMap();
+        map.put("publisher",publisher);
+        map.put("introduction",introduction);
+        map.put("author",author);
+        map.put("location",location);
+        return getSqlSession().selectList("songyutong.queryByMultiConditions",map);
     }
 }

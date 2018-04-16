@@ -175,6 +175,7 @@ public class AdminController {
         return "error";
     }
 
+
     @RequestMapping(value = "/admin/delete/user/{UserId}")
     public String deleteUser(HttpSession httpSession,@PathVariable long UserId)
     {
@@ -195,4 +196,24 @@ public class AdminController {
         }
         return "error";
     }
+     public String queryByName(HttpSession httpSession,Model model,String username)
+     {
+         BaseResult result=new BaseResult();
+         try {
+             LoggerUtil.info(LOGGER, "enter in AdminController[queryByName],username{0}",username);
+             UserDTO userDTO = (UserDTO) httpSession.getAttribute("isLogin");
+             if (userDTO == null) {
+                 return "redirect:/login";
+             }
+             List<UserDTO> userDTOList=userService.queryByName(username);
+             model.addAttribute("userDTOList",userDTOList);
+             result.setSuccess(true);
+             return "admin_index";
+         }catch(BusinessException be){
+             ExceptionHandler.handleBusinessException(LOGGER,result,be,"查询用户失败");
+         }catch(Exception e){
+             ExceptionHandler.handleSystemException(LOGGER,result,e,"查询用户失败");
+         }
+         return "error";
+     }
 }

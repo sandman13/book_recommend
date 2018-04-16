@@ -110,6 +110,17 @@ public class BookInfoServiceImpl implements BookInfoService {
         return id>0;
     }
 
+    @Override
+    public List<BookDTO> queryByMultiConditions(String publisher,String introduction,String author,String location) {
+        LoggerUtil.info(LOGGER, "enter in BookInfoService[queryByMultiConditions],publisher:{0} introduction {1} author:{2} location:{3}",publisher,introduction,author,location);
+        publisher= StringUtils.isEmpty(publisher)?" ":'%'+publisher+'%';
+        introduction=StringUtils.isEmpty(introduction)?" ":'%'+introduction+'%';
+        author= StringUtils.isEmpty(author)?" ":'%'+author+'%';
+        location= StringUtils.isEmpty(location)?" ":'%'+location+'%';
+        List<BookDO> bookDOList=bookDao.queryByMultiConditions(publisher,introduction,author,location);
+        return convertDOsTODTOs(bookDOList);
+    }
+
     /**
      * DTO对象转DO对象
      * @param bookDTO

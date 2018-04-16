@@ -122,4 +122,33 @@ public class BookController {
         return "error";
    }
 
+    /**
+     * 根据出版社，介绍，作者，位置进行复合搜索
+     * @param httpSession
+     * @param model
+     * @param publisher
+     * @param introduction
+     * @param author
+     * @param location
+     * @return
+     */
+    public String queryByMultiConditions(HttpSession httpSession,Model model,@PathVariable String publisher,@PathVariable String introduction,@PathVariable String author,@PathVariable String location) {
+        LoggerUtil.info(LOGGER, "enter in BookController[queryByMultiConditions],publisher:{0} introduction {1} author:{2} location:{3}", publisher, introduction, author, location);
+        BaseResult result = new BaseResult();
+        try {
+            UserDTO userDTO = (UserDTO) httpSession.getAttribute("isLogin");
+            if (userDTO == null) {
+                return "redirect:/login";
+            }
+            List<BookDTO> bookDTOList = bookInfoService.queryByMultiConditions(publisher, introduction, author, location);
+            model.addAttribute("bookDTOList", bookDTOList);
+            result.setSuccess(true);
+            return "reader_index";
+        } catch (BusinessException be) {
+            ExceptionHandler.handleBusinessException(LOGGER, result, be, "复合搜索书籍失败,publisher:{0} introduction {1} author:{2} location:{3}", publisher, introduction, author, location);
+        } catch (Exception ex) {
+            ExceptionHandler.handleSystemException(LOGGER, result, ex, "复合搜索书籍失败,publisher:{0} introduction {1} author:{2} location:{3}", publisher, introduction, author, location);
+        }
+        return "error";
+    }
 }

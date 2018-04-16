@@ -31,6 +31,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean updateUser(UserDTO userDTO) {
         LoggerUtil.info(LOGGER,"enter in UserServiceImpl[updateUser],userDTO:{0}",userDTO);
+        UserDO userDO=userDao.queryByUserId(userDTO.getUserId());
+        userDTO.setUserStatus(userDO.getUserStatus());
         long id=userDao.updateUser(convertToDO(userDTO));
         return id>0;
     }
@@ -49,6 +51,13 @@ public class UserServiceImpl implements UserService {
         return id>0;
     }
 
+    @Override
+    public List<UserDTO> queryByName(String username) {
+        LoggerUtil.info(LOGGER,"enter in UserServiceImpl[queryByName],username{0}",username);
+        List<UserDO> userDOList=userDao.queryByName(username);
+        return convertDOSToDTOS(userDOList);
+    }
+
     /**
      * userDTO对象转为userDO对象
      * @param userDTO
@@ -62,6 +71,7 @@ public class UserServiceImpl implements UserService {
         userDO.setPassword(userDTO.getPassword());
         userDO.setEmail(userDTO.getEmail());
         userDO.setModifier(userDTO.getModifier());
+        userDO.setUserStatus(userDTO.getUserStatus());
         userDO.setPhoneNumber(userDTO.getPhoneNumber());
         return userDO;
     }
