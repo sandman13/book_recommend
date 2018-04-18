@@ -68,20 +68,20 @@
 <nav class="navbar navbar-inverse" role="navigation">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href="/admin/index">图书管理系统</a>
+            <a class="navbar-brand" href="#">图书管理系统</a>
         </div>
         <div>
             <ul class="nav navbar-nav">
                 <li class="active"><a href="/admin/index">书籍管理</a></li>
                 <li ><a href="/admin/user">用户管理</a></li>
-                <li><a href="/admin/orderList">借阅管理</a></li>
+                <li><a href="/admin/order">订阅管理</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span>&nbsp退出</a></li>
             </ul>
         </div>
         <div class="pull-right">
-            <form class="navbar-form navbar-left" role="search" action="/admin/queryBook">
+            <form class="navbar-form navbar-left" role="search" action="/admin/queryBook" >
                 <div class="form-group">
                     <input type="text" name="bookName" class="form-control" placeholder="请输入书名">
                 </div>
@@ -152,7 +152,11 @@
             </thead>
             <tbody>
             <%
-                PageInfo<BookDTO> pageInfo = (PageInfo<BookDTO>) request.getAttribute("page");
+                PageInfo<BookDTO> pageInfo = (PageInfo<BookDTO>) request.getAttribute("pageInfo");
+                String introduction=(String)request.getAttribute("introduction");
+                String publisher = (String) request.getAttribute("publisher");
+                String location=(String) request.getAttribute("location");
+                String author=(String) request.getAttribute("author");
                 if (pageInfo!=null){
                     for (BookDTO bookDTO:pageInfo.getList()){
 
@@ -337,19 +341,19 @@
     <nav aria-label="Page navigation">
         <ul class="pagination">
             <li>
-                <a href="/admin/index?page=<%= pageInfo.getPrePage() %>" aria-label="Previous">
+                <a href="/admin/queryByMultiConditions?page=<%= pageInfo.getPrePage() %>&publisher=<%=publisher%>&location=<%=location%>&introduction=<%=introduction%>&author=<%=author%>" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
             <% for (int i=0;i<pageInfo.getPages();i++){
-                 if (pageInfo.getPageNum()==i+1){
+                if (pageInfo.getPageNum()==i+1){
             %>
-            <li class="active"><a href="/admin/index?page=<%= i+1 %>"><%= i+1 %></a></li>
+            <li class="active"><a href="/admin/queryByMultiConditions?page=<%= i+1 %>&publisher=<%=publisher%>&location=<%=location%>&introduction=<%=introduction%>&author=<%=author%>"><%= i+1 %></a></li>
             <%}else {%>
-            <li><a href="/admin/index?page=<%= i+1 %>"><%= i+1 %></a></li>
+            <li><a href="/admin/queryByMultiConditions?page=<%= i+1 %>&publisher=<%=publisher%>&location=<%=location%>&introduction=<%=introduction%>&author=<%=author%>"><%= i+1 %></a></li>
             <% }} %>
             <li>
-                <a href="/admin/index?page=<%= pageInfo.getNextPage()%>" aria-label="Next">
+                <a href="/admin/queryByMultiConditions?page=<%= pageInfo.getNextPage()%>&publisher=<%=publisher%>&location=<%=location%>&introduction=<%=introduction%>&author=<%=author%>" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>

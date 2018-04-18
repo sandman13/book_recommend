@@ -119,9 +119,9 @@
                                 </c:when>
                                 <c:otherwise>
                                     <td>
-                                        <button class="btn btn-danger btn-sm disabled">
+                                        <button class="btn btn-danger btn-sm disabled" id="${book.bookId}">
                                             <span class="glyphicon glyphicon-eye-close"></span>
-                                            借阅
+                                            不可借阅
                                         </button>
                                     </td>
                                 </c:otherwise>
@@ -142,6 +142,7 @@
                                             console.log(data);
                                             if (data.baseResult.success) {
                                                 solveSuccess("借阅成功");
+
                                             } else {
                                                 solveFail(data.baseResult.message);
                                             }

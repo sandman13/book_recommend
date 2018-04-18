@@ -11,5 +11,7 @@ public interface UserService {
 
     boolean deleteUser(long UserId);
 
-    List<UserDTO> queryByName(String username);
+    UserDTO queryByName(String username);
+
+    UserDTO queryByUserId(long userId);
 }

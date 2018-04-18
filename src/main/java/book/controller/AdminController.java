@@ -1,10 +1,13 @@
 package book.controller;
 
+import book.domain.ListAndB;
 import book.domain.dto.BookDTO;
+import book.domain.dto.BorrowDTO;
 import book.domain.dto.UserDTO;
 import book.domain.exception.BusinessException;
 import book.domain.result.BaseResult;
 import book.service.BookInfoService;
+import book.service.BorrowService;
 import book.service.UserService;
 import book.task.OSS;
 import book.util.ExceptionHandler;
@@ -40,6 +43,9 @@ public class AdminController {
 
     @Resource(name = "ossClient")
     private OSS oss;
+
+    @Resource(name = "borrowService")
+    private BorrowService borrowService;
     /**
      * 管理员下展示所有书籍
      * url支持参数为空和提供参数两种情况
@@ -196,7 +202,9 @@ public class AdminController {
         }
         return "error";
     }
-     public String queryByName(HttpSession httpSession,Model model,String username)
+
+    @RequestMapping(value = "/admin/queryByName")
+     public String queryByUserName(HttpSession httpSession,Model model,String username)
      {
          BaseResult result=new BaseResult();
          try {
@@ -205,14 +213,123 @@ public class AdminController {
              if (userDTO == null) {
                  return "redirect:/login";
              }
-             List<UserDTO> userDTOList=userService.queryByName(username);
-             model.addAttribute("userDTOList",userDTOList);
+             UserDTO myUserDTO=userService.queryByName(username);
+             model.addAttribute("userList",myUserDTO);
              result.setSuccess(true);
-             return "admin_index";
+             return "admin_user";
          }catch(BusinessException be){
              ExceptionHandler.handleBusinessException(LOGGER,result,be,"查询用户失败");
          }catch(Exception e){
              ExceptionHandler.handleSystemException(LOGGER,result,e,"查询用户失败");
+         }
+         return "error";
+     }
+     @RequestMapping(value = "/admin/queryBook")
+     public String queryByBookName(HttpSession httpSession,String bookName,Model model)
+     {
+         BaseResult result=new BaseResult();
+         try {
+             LoggerUtil.info(LOGGER, "enter in AdminController[queryByBookName],bookname{0}",bookName);
+             UserDTO userDTO = (UserDTO) httpSession.getAttribute("isLogin");
+             if (userDTO == null) {
+                 return "redirect:/login";
+             }
+             List<BookDTO> bookDTOList=bookInfoService.queryBookByBookName(bookName);
+             model.addAttribute("bookList",bookDTOList);
+             result.setSuccess(true);
+             return "admin_query";
+         }catch(BusinessException be){
+             ExceptionHandler.handleBusinessException(LOGGER,result,be,"查询书籍失败");
+         }catch(Exception e){
+             ExceptionHandler.handleSystemException(LOGGER,result,e,"查询书籍失败");
+         }
+         return "error";
+     }
+
+    /**
+     * 管理员展示所有借阅记录
+     * @param httpSession
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/admin/orderList")
+     public String OrderManage(HttpSession httpSession,Model model)
+     {
+         BaseResult result=new BaseResult();
+         try {
+             LoggerUtil.info(LOGGER, "enter in AdminController[OrderManage]");
+             UserDTO userDTO = (UserDTO) httpSession.getAttribute("isLogin");
+             if (userDTO == null) {
+                 return "redirect:/login";
+             }
+             ListAndB listAndB=borrowService.listAllBorrows();
+             model.addAttribute("orderValidList",listAndB.getListValid());
+             model.addAttribute("orderDeletedList",listAndB.getListDeleted());
+             result.setSuccess(true);
+             return "admin_order";
+         }catch(BusinessException be){
+             ExceptionHandler.handleBusinessException(LOGGER,result,be,"查询书籍失败");
+         }catch(Exception e){
+             ExceptionHandler.handleSystemException(LOGGER,result,e,"查询书籍失败");
+         }
+         return "error";
+     }
+
+    /**
+     * 管理员根据用户名查找对应的借阅记录
+     * @param httpSession
+     * @param model
+     * @param username
+     * @return
+     */
+    @RequestMapping(value = "/admin/queryOrder")
+     public String queryOrderByUser(HttpSession httpSession,Model model,String username)
+     {
+         BaseResult result=new BaseResult();
+         try {
+             LoggerUtil.info(LOGGER, "enter in AdminController[queryOrderByUser],username:{0}",username);
+             UserDTO userDTO = (UserDTO) httpSession.getAttribute("isLogin");
+             if (userDTO == null) {
+                 return "redirect:/login";
+             }
+             UserDTO myUserDTO=userService.queryByName(username);
+             List<BorrowDTO> borrowDTOList=borrowService.listByUserId(myUserDTO.getUserId());
+             model.addAttribute("username",username);
+             model.addAttribute("borrowDTOList",borrowDTOList);
+             result.setSuccess(true);
+             return "admin_order";
+         }catch(BusinessException be){
+             ExceptionHandler.handleBusinessException(LOGGER,result,be,"查询借阅记录失败");
+         }catch(Exception e){
+             ExceptionHandler.handleSystemException(LOGGER,result,e,"查询借阅记录失败");
+         }
+         return "error";
+
+     }
+
+    /**
+     * 管理员更改borrow_status
+     * @param httpSession
+     * @param borrowId
+     * @return
+     */
+     @RequestMapping(value = "/admin/updateOrder")
+     public String updateOrder(HttpSession httpSession,long borrowId)
+     {
+         BaseResult result=new BaseResult();
+         try {
+             LoggerUtil.info(LOGGER, "enter in AdminController[updateOrder]");
+             UserDTO userDTO = (UserDTO) httpSession.getAttribute("isLogin");
+             if (userDTO == null) {
+                 return "redirect:/login";
+             }
+             borrowService.updateStatus(borrowId);
+             result.setSuccess(true);
+             return "admin_order";
+         }catch(BusinessException be){
+             ExceptionHandler.handleBusinessException(LOGGER,result,be,"更改借阅状态失败");
+         }catch(Exception e){
+             ExceptionHandler.handleSystemException(LOGGER,result,e,"更改借阅状态失败");
          }
          return "error";
      }

@@ -52,7 +52,6 @@ public class BorrowController {
      * @return
      */
     @RequestMapping(value = "borrow/{bookId}")
-    @ResponseBody
     public ModelAndView borrow(HttpSession httpSession, @PathVariable long bookId) {
         LoggerUtil.info(LOGGER, "enter in BorrowController[borrow],bookId:{0}", bookId);
         ModelAndView modelAndView = new ModelAndView();
@@ -60,8 +59,8 @@ public class BorrowController {
         try {
             UserDTO userDTO = (UserDTO) httpSession.getAttribute("isLogin");
             if (userDTO == null) {
-                modelAndView.setViewName("login");
-                return modelAndView;
+               modelAndView=new ModelAndView();
+               modelAndView.setViewName("/login");
             }
             boolean isSuccess = borrowService.borrow(userDTO.getUserId(), bookId);
             ValidateUtils.checkTrue(isSuccess, "借阅图书失败,请重试");

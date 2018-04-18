@@ -81,9 +81,9 @@
             </ul>
         </div>
         <div class="pull-right">
-            <form class="navbar-form navbar-left" role="search">
+            <form class="navbar-form navbar-left" role="search" action="/admin/queryByName">
                 <div class="form-group">
-                    <input type="text" name="studentId" class="form-control" placeholder="请输入用户名">
+                    <input type="text" name="username" class="form-control" placeholder="请输入用户名">
                 </div>
                 <button type="submit" class="btn btn-default">搜索</button>
             </form>
@@ -177,7 +177,7 @@
                                             <label class="col-sm-2 control-label">用户名</label>
                                             <div class="col-sm-10">
                                                 <input class="form-control" name="username" placeholder="用户名"
-                                                       type="text" value=" <%= userDTO.getUsername() %>">
+                                                       type="text" value="<%= userDTO.getUsername() %>">
                                             </div>
                                         </div>
                                         <div class="form-group">

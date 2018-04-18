@@ -16,7 +16,7 @@ public interface UserDao {
 
      List<UserDO> listAllUsers();
 
-     List<UserDO> queryByName(String username);
+     UserDO queryByName(String username);
 
      long insertUser(UserDO userDO);
 

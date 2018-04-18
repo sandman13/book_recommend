@@ -62,6 +62,13 @@ public class BookInfoServiceImpl implements BookInfoService {
     }
 
     @Override
+    public List<BookDTO> queryBookByBookName(String bookName) {
+        LoggerUtil.info(LOGGER,"enter in BookInfoService[queryBookByBookName],bookName:{0}",bookName);
+        List<BookDO> bookDOList=bookDao.listBooksByName(bookName);
+        return convertDOsTODTOs(bookDOList);
+    }
+
+    @Override
     public List<BookDTO> AdminListAllBooks() {
          LoggerUtil.info(LOGGER,"enter in BookInfoService[AdminListAllBooks]");
          List<BookDO>bookDOList=bookDao.listAllBooks();
@@ -111,14 +118,22 @@ public class BookInfoServiceImpl implements BookInfoService {
     }
 
     @Override
-    public List<BookDTO> queryByMultiConditions(String publisher,String introduction,String author,String location) {
+    public PageInfo<BookDTO> queryByMultiConditions(String publisher,String introduction,String author,String location,int page) {
         LoggerUtil.info(LOGGER, "enter in BookInfoService[queryByMultiConditions],publisher:{0} introduction {1} author:{2} location:{3}",publisher,introduction,author,location);
-        publisher= StringUtils.isEmpty(publisher)?" ":'%'+publisher+'%';
-        introduction=StringUtils.isEmpty(introduction)?" ":'%'+introduction+'%';
-        author= StringUtils.isEmpty(author)?" ":'%'+author+'%';
-        location= StringUtils.isEmpty(location)?" ":'%'+location+'%';
-        List<BookDO> bookDOList=bookDao.queryByMultiConditions(publisher,introduction,author,location);
-        return convertDOsTODTOs(bookDOList);
+        publisher= StringUtils.isEmpty(publisher)?null:'%'+publisher+'%';
+        introduction=StringUtils.isEmpty(introduction)?null:'%'+introduction+'%';
+        author= StringUtils.isEmpty(author)?null:'%'+author+'%';
+        location= StringUtils.isEmpty(location)?null:'%'+location+'%';
+        PageInfo<BookDO> bookDOPageInfo=bookDao.queryByMultiConditions(publisher,introduction,author,location,page);
+        PageInfo<BookDTO>bookDTOPageInfo=new PageInfo<>();
+        bookDTOPageInfo.setList(convertDOsTODTOs(bookDOPageInfo.getList()));
+        bookDTOPageInfo.setPrePage(bookDOPageInfo.getPrePage());
+        bookDTOPageInfo.setNextPage(bookDOPageInfo.getNextPage());
+        bookDTOPageInfo.setHasNextPage(bookDOPageInfo.isHasNextPage());
+        bookDTOPageInfo.setHasPreviousPage(bookDOPageInfo.isHasPreviousPage());
+        bookDTOPageInfo.setPages(bookDOPageInfo.getPages());
+        bookDTOPageInfo.setPageNum(bookDOPageInfo.getPageNum());
+        return bookDTOPageInfo;
     }
 
     /**

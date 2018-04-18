@@ -97,13 +97,16 @@ public class BookDaoImpl extends CommonDao implements BookDao {
     }
 
     @Override
-    public List<BookDO> queryByMultiConditions(String publisher, String introduction, String author, String location) {
+    public PageInfo<BookDO> queryByMultiConditions(String publisher, String introduction, String author, String location,int page) {
         LoggerUtil.info(LOGGER,"enter in BookDaoImpl[queryByMultiConditions],publisher:{0} introduction {1} author:{2} location:{3}",publisher,introduction,author,location);
         Map<String,String> map= Maps.newHashMap();
         map.put("publisher",publisher);
         map.put("introduction",introduction);
         map.put("author",author);
         map.put("location",location);
-        return getSqlSession().selectList("songyutong.queryByMultiConditions",map);
+        PageHelper.startPage(page,8);
+        List<BookDO> bookDOList = getSqlSession().selectList("songyutong.queryByMultiConditions", map);
+        PageInfo<BookDO> pageInfo=new PageInfo<>(bookDOList);
+        return pageInfo;
     }
 }

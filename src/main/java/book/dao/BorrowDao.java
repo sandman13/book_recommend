@@ -19,4 +19,6 @@ public interface BorrowDao {
     BorrowDO queryByBorrowId(long borrowId);
 
     List<BorrowDO> listAllBorrows();
+
+    long updateStatus(BorrowDO borrowDO);
 }

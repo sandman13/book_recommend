@@ -17,6 +17,8 @@ public interface BookInfoService {
 
     PageInfo<BookDTO> AdminListAllBooks(int page);
 
+    List<BookDTO> queryBookByBookName(String bookName);
+
     List<BookDTO> listBooksByConditions(String conditions);
 
     List<BookDTO> listBooksByNameAndAuthor(String bookName,String author);
@@ -27,5 +29,5 @@ public interface BookInfoService {
 
     boolean deleteBook(long bookId);
 
-    List<BookDTO> queryByMultiConditions(String publisher,String introduction,String author,String location);
+    PageInfo<BookDTO> queryByMultiConditions(String publisher,String introduction,String author,String location,int page);
 }

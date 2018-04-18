@@ -4,6 +4,7 @@ import book.dao.BookDao;
 import book.dao.BorrowDao;
 import book.dao.UserDao;
 import book.domain.Enum.StatusEnum;
+import book.domain.ListAndB;
 import book.domain.dataobject.BookDO;
 import book.domain.dataobject.BorrowDO;
 import book.domain.dataobject.UserDO;
@@ -26,6 +27,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import book.*;
 
 /**
  * @author yutong song
@@ -48,6 +50,7 @@ public class BorrowServiceImpl implements BorrowService {
     @Resource(name = "userDao")
     private UserDao userDao;
 
+    public ListAndB listAndB=new ListAndB();
     /**
      * 借阅图书
      *
@@ -129,6 +132,43 @@ public class BorrowServiceImpl implements BorrowService {
         borrowDO.setModifier(userDO.getUsername());
         borrowDO.setGoal(goal);
         return borrowDao.updateBorrow(borrowDO)>0;
+    }
+
+    @Override
+    public ListAndB listAllBorrows() {
+        LoggerUtil.info(LOGGER,"enter in BorrowServiceImpl[listAllBorrows]");
+        List<BorrowDO> borrowDOList = borrowDao.listAllBorrows();
+        List<BorrowDTO> borrowDTOValidList=Lists.newArrayList();
+        List<BorrowDTO> borrowDTODeleteList=Lists.newArrayList();
+        //补充图书信息
+        for (BorrowDO borrowDO : borrowDOList) {
+            BookDO bookDO = bookDao.queryBookByBookId(borrowDO.getBookId());
+            if(borrowDO.getBorrowStatus().equals(StatusEnum.VALID.name()))
+            {
+                BorrowDTO borrowDTO = convertToDTO(borrowDO);
+                borrowDTO.setBookDTO(convertToDTO(bookDO));
+                borrowDTOValidList.add(borrowDTO);
+            }
+            else
+            {
+                BorrowDTO borrowDTO = convertToDTO(borrowDO);
+                borrowDTO.setBookDTO(convertToDTO(bookDO));
+                borrowDTODeleteList.add(borrowDTO);
+            }
+        }
+        listAndB.setListValid(borrowDTOValidList);
+        listAndB.setListDeleted(borrowDTODeleteList);
+        return listAndB;
+    }
+
+    @Override
+    public boolean updateStatus(long borrowId) {
+        LoggerUtil.info(LOGGER,"enter in BorrowServiceImpl[updateStatus],borrowId:{0}",borrowId);
+        BorrowDO borrowDO = borrowDao.queryByBorrowId(borrowId);
+        ValidateUtils.checkNotNull(borrowDO, "待更新的记录不存在");
+        borrowDO.setBorrowStatus("DELETED");
+        long id=borrowDao.updateBorrow(borrowDO);
+        return id>0;
     }
 
     private BookDTO convertToDTO(BookDO bookDO) {

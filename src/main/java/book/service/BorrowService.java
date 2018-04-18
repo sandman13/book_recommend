@@ -1,5 +1,6 @@
 package book.service;
 
+import book.domain.ListAndB;
 import book.domain.dto.BorrowDTO;
 
 import java.util.List;
@@ -15,5 +16,9 @@ public interface BorrowService {
     List<BorrowDTO> listByUserId(long userId);
 
     boolean updateByBorrowId(long borrowId,int goal);
+
+    ListAndB listAllBorrows();
+
+    boolean updateStatus(long borrowId);
 
 }

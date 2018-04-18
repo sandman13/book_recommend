@@ -41,6 +41,4 @@
         SELECT * FROM  borrow where borrow_status!='DELETED'
     </select>
 
-
-
 </mapper>

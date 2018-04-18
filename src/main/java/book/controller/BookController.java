@@ -9,13 +9,12 @@ import book.service.BookInfoService;
 import book.service.RecommendService;
 import book.util.ExceptionHandler;
 import book.util.LoggerUtil;
+import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
@@ -98,7 +97,7 @@ public class BookController {
      * @param author
      * @return
      */
-   @RequestMapping(value = "/book/{bookName}/{author}")
+   @RequestMapping(value = "/book/{bookName:.+}/{author:.+}")
    public String listDetail(HttpSession httpSession, Model model, @PathVariable String bookName,@PathVariable String author){
         LoggerUtil.info(LOGGER,"enter in BookController[listDetail],bookName:{0},author:{1}",bookName,author);
         BaseResult result=new BaseResult();
@@ -132,7 +131,8 @@ public class BookController {
      * @param location
      * @return
      */
-    public String queryByMultiConditions(HttpSession httpSession,Model model,@PathVariable String publisher,@PathVariable String introduction,@PathVariable String author,@PathVariable String location) {
+    @RequestMapping(value = "/admin/queryByMultiConditions")
+    public String queryByMultiConditions(HttpSession httpSession, Model model, @RequestParam  String publisher, @RequestParam String introduction, @RequestParam String author, @RequestParam String location,@RequestParam(required = false,value = "page",defaultValue = "1") Integer page) {
         LoggerUtil.info(LOGGER, "enter in BookController[queryByMultiConditions],publisher:{0} introduction {1} author:{2} location:{3}", publisher, introduction, author, location);
         BaseResult result = new BaseResult();
         try {
@@ -140,10 +140,14 @@ public class BookController {
             if (userDTO == null) {
                 return "redirect:/login";
             }
-            List<BookDTO> bookDTOList = bookInfoService.queryByMultiConditions(publisher, introduction, author, location);
-            model.addAttribute("bookDTOList", bookDTOList);
+            PageInfo<BookDTO> pageInfo= bookInfoService.queryByMultiConditions(publisher, introduction, author, location,page);
+            model.addAttribute("pageInfo",pageInfo);
+            model.addAttribute("publisher",publisher);
+            model.addAttribute("introduction",introduction);
+            model.addAttribute("location",location);
+            model.addAttribute("author",author);
             result.setSuccess(true);
-            return "reader_index";
+            return "admin_multiply";
         } catch (BusinessException be) {
             ExceptionHandler.handleBusinessException(LOGGER, result, be, "复合搜索书籍失败,publisher:{0} introduction {1} author:{2} location:{3}", publisher, introduction, author, location);
         } catch (Exception ex) {

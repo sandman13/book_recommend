@@ -66,5 +66,5 @@ public interface BookDao {
 
     long deleteBook(long bookId);
 
-    List<BookDO> queryByMultiConditions(String publisher,String introduction,String author,String location);
+    PageInfo<BookDO> queryByMultiConditions(String publisher,String introduction,String author,String location,int page);
 }

@@ -49,4 +49,10 @@ public class BorrowDaoImpl extends CommonDao implements BorrowDao {
         LoggerUtil.info(LOGGER,"enter in BorrowDaoImpl[listAllBorrows]");
         return getSqlSession().selectList("songyutong.listAllBorrows");
     }
+
+    @Override
+    public long updateStatus(BorrowDO borrowDO) {
+        LoggerUtil.info(LOGGER,"enter in BorrowDaoImpl[updateStatus],borrowDO:{0}",borrowDO);
+        return getSqlSession().update("songyutong.updateByBorrowId",borrowDO);
+    }
 }

@@ -68,13 +68,13 @@
 <nav class="navbar navbar-inverse" role="navigation">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href="/admin/index">图书管理系统</a>
+            <a class="navbar-brand" href="#">图书管理系统</a>
         </div>
         <div>
             <ul class="nav navbar-nav">
                 <li class="active"><a href="/admin/index">书籍管理</a></li>
                 <li ><a href="/admin/user">用户管理</a></li>
-                <li><a href="/admin/orderList">借阅管理</a></li>
+                <li><a href="/admin/order">订阅管理</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span>&nbsp退出</a></li>
@@ -152,10 +152,8 @@
             </thead>
             <tbody>
             <%
-                PageInfo<BookDTO> pageInfo = (PageInfo<BookDTO>) request.getAttribute("page");
-                if (pageInfo!=null){
-                    for (BookDTO bookDTO:pageInfo.getList()){
-
+             List<BookDTO> bookDTOList=(List<BookDTO>)request.getAttribute("bookList");
+             for (BookDTO  bookDTO:bookDTOList){
             %>
             <tr>
                 <td class="col-md-1"><%= bookDTO.getBookName()%>
@@ -252,7 +250,7 @@
 
             <%
                     }
-                }
+
             %>
             </tbody>
         </table>
@@ -328,33 +326,7 @@
 
 
 
-
-
-
-
     </div>
-    <!--分页-->
-    <nav aria-label="Page navigation">
-        <ul class="pagination">
-            <li>
-                <a href="/admin/index?page=<%= pageInfo.getPrePage() %>" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-            <% for (int i=0;i<pageInfo.getPages();i++){
-                 if (pageInfo.getPageNum()==i+1){
-            %>
-            <li class="active"><a href="/admin/index?page=<%= i+1 %>"><%= i+1 %></a></li>
-            <%}else {%>
-            <li><a href="/admin/index?page=<%= i+1 %>"><%= i+1 %></a></li>
-            <% }} %>
-            <li>
-                <a href="/admin/index?page=<%= pageInfo.getNextPage()%>" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
 
 </div>
 

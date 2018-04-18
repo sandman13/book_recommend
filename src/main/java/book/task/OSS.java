@@ -4,12 +4,15 @@ import book.domain.exception.BusinessException;
 import book.util.LoggerUtil;
 import book.util.ValidateUtils;
 import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.model.GetObjectRequest;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.net.URL;
 import java.util.Date;
 
@@ -56,7 +59,15 @@ public class OSS {
         ValidateUtils.checkTrue(inputStream.available()<MAX_FILE_UPLOAD_SIZE,"待上传的文件超过16M");
         LoggerUtil.info(LOGGER,"START UPLOAD[ossKey:{0}]",ossKey);
         try {
-            ossClient.putObject(bucketName, ossKey, inputStream);
+            Image srcImg = ImageIO.read(inputStream);
+            BufferedImage result = new BufferedImage(70, 100, BufferedImage.TYPE_INT_RGB);
+            result.getGraphics().drawImage(srcImg.getScaledInstance(70, 100, java.awt.Image.SCALE_SMOOTH), 0, 0, null);
+            ByteArrayOutputStream bs = new ByteArrayOutputStream();
+            String format = achiveFormat(ossKey);
+            ImageIO.write(result, format, bs);
+            InputStream uploadInputStream = new ByteArrayInputStream(bs.toByteArray());
+
+            ossClient.putObject(bucketName, ossKey, uploadInputStream);
             LoggerUtil.info(LOGGER,"上传文件成功,ossKey:{0}",ossKey);
             return true;
         }catch (BusinessException ex){
@@ -80,4 +91,14 @@ public class OSS {
         }
         return null;
     }
+    public  String achiveFormat(String pictureName) {
+        String[] temp = pictureName.split("\\.");
+        if (!StringUtils.equals(temp[temp.length - 1], "png") && (StringUtils.equals(temp[temp.length - 1], "jpg")) && (StringUtils.equals(temp[temp.length - 1], "jpeg"))) {
+            throw new BusinessException("格式不符合规范");
+        }
+        return temp[temp.length - 1];
+    }
+
 }
+
+

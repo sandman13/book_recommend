@@ -52,10 +52,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> queryByName(String username) {
+    public UserDTO queryByName(String username) {
         LoggerUtil.info(LOGGER,"enter in UserServiceImpl[queryByName],username{0}",username);
-        List<UserDO> userDOList=userDao.queryByName(username);
-        return convertDOSToDTOS(userDOList);
+        UserDO userDO=userDao.queryByName(username);
+        return convertToDTO(userDO);
+    }
+
+    @Override
+    public UserDTO queryByUserId(long userId) {
+        LoggerUtil.info(LOGGER,"enter in UserServiceImpl[queryByUserId],userId:{0}",userId);
+        UserDO userDO=userDao.queryByUserId(userId);
+        return convertToDTO(userDO);
     }
 
     /**

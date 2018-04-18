@@ -40,7 +40,7 @@ public class RegisterServiceImpl implements RegisterService {
         userDO.setPassword(userDTO.getPassword());
         userDO.setEmail(userDTO.getEmail());
         userDO.setPhoneNumber(userDTO.getPhoneNumber());
-        userDO.setUserStatus(StatusEnum.VALID.name());
+        userDO.setUserStatus(StatusEnum.READER.name());
         return userDO;
     }
 }

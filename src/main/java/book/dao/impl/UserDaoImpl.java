@@ -56,9 +56,9 @@ public class UserDaoImpl extends CommonDao implements UserDao {
     }
 
     @Override
-    public List<UserDO> queryByName(String username) {
+    public UserDO queryByName(String username) {
         LoggerUtil.info(LOGGER,"enter in UserDaoImpl[queryByName],username{0}",username);
-        return getSqlSession().selectList("songyutong.queryByName",username);
+        return getSqlSession().selectOne("songyutong.queryByName",username);
     }
 
     @Override
