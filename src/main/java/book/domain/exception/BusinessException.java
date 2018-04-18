@@ -1,7 +1,7 @@
 package book.domain.exception;
 
 /**
- * @author yutong song
+ * @author hui zhang
  * @date 2018/3/20
  */
 

@@ -1,8 +1,10 @@
 import book.controller.AdminController;
 import book.domain.dataobject.BookDO;
 import book.domain.dto.BookDTO;
+import book.domain.dto.BorrowDTO;
 import book.domain.dto.UserDTO;
 import book.service.BookInfoService;
+import book.service.BorrowService;
 import book.service.RegisterService;
 import book.service.UserService;
 import com.google.common.collect.Lists;
@@ -27,22 +29,17 @@ public class test {
 
     @Resource(name ="RegisterService")
     private RegisterService registerService;
+
+    @Resource(name = "borrowService")
+    BorrowService borrowService;
     @Test
     public void testAdd() {
-       /* UserDTO userDTO = new UserDTO();
-        userDTO.setUserId(133);
-
-        userDTO.setEmail("zh268262441@126.com");
-        userDTO.setUsername("Flora");
-        userDTO.setPassword("456");
-        userDTO.setPhoneNumber("15861813969");
-        userDTO.setGmtCreate("2018-01-01 14:00:00");
-        userDTO.setGmtModified("2018-01-10 15:00:00");
-        */
-        //Assert.assertTrue(userService.updateUser(userDTO));
-
-        Assert.assertTrue(userService.deleteUser(133));
+        List<BorrowDTO> borrowDTOList=Lists.newArrayList();
+        borrowDTOList=borrowService.listByUserId(2);
+        for(BorrowDTO borrowDTO:borrowDTOList)
+        {
+            System.out.println(borrowDTO);
+        }
     }
-
 
 }

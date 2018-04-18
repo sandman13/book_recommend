@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * @author yutong song
+ * @author hui zhang
  * @date 2018/3/22
  */
 @Repository(value = "recommendDao")

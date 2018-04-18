@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author yutong song
+ * @author hui zhang
  * @date 2018/3/20
  */
 @Repository(value = "userDao")
@@ -35,7 +35,7 @@ public class UserDaoImpl extends CommonDao implements UserDao {
         Map<String,String> map= Maps.newHashMap();
         map.put("username",username);
         map.put("password",password);
-        List<UserDO> userDOList = getSqlSession().selectList("songyutong.queryByUserNameAndPassword",map);
+        List<UserDO> userDOList = getSqlSession().selectList("zhanghui.queryByUserNameAndPassword",map);
         //防止下游空指针
         if (userDOList==null){
             return Lists.newArrayList();
@@ -46,38 +46,38 @@ public class UserDaoImpl extends CommonDao implements UserDao {
     @Override
     public UserDO queryByUserId(long userId) {
         LoggerUtil.info(LOGGER,"enter in UserDaoImpl[queryByUserId],userId:{0}",userId);
-        return getSqlSession().selectOne("songyutong.queryByUserId",userId);
+        return getSqlSession().selectOne("zhanghui.queryByUserId",userId);
     }
 
     @Override
     public List<UserDO> listAllUsers() {
         LoggerUtil.info(LOGGER,"enter in UserDaoImpl[listAllUsers]");
-        return getSqlSession().selectList("songyutong.listAllUsers");
+        return getSqlSession().selectList("zhanghui.listAllUsers");
     }
 
     @Override
     public UserDO queryByName(String username) {
         LoggerUtil.info(LOGGER,"enter in UserDaoImpl[queryByName],username{0}",username);
-        return getSqlSession().selectOne("songyutong.queryByName",username);
+        return getSqlSession().selectOne("zhanghui.queryByName",username);
     }
 
     @Override
     public long insertUser(UserDO userDO) {
         LoggerUtil.info(LOGGER,"enter in UserDaoImpl[insertUser],userDo:{0}",userDO);
-        long id=getSqlSession().insert("songyutong.insertUser",userDO);
+        long id=getSqlSession().insert("zhanghui.insertUser",userDO);
         return userDO.getUserId();
     }
 
     @Override
     public long updateUser(UserDO userDO) {
         LoggerUtil.info(LOGGER,"enter in UserDaoImpl[updateUser],userDo:{0}",userDO);
-        long id=getSqlSession().update("songyutong.updateUser",userDO);
+        long id=getSqlSession().update("zhanghui.updateUser",userDO);
         return userDO.getUserId();
     }
 
     @Override
     public long deleteUser(long userId) {
         LoggerUtil.info(LOGGER,"enter in UserDaoImpl[deleteUser],userId{0}",userId);
-        return getSqlSession().delete("songyutong.deleteUser",userId);
+        return getSqlSession().delete("zhanghui.deleteUser",userId);
     }
 }

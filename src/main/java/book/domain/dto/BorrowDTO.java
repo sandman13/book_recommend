@@ -3,7 +3,7 @@ package book.domain.dto;
 import book.domain.BaseObject;
 
 /**
- * @author yutong song
+ * @author hui zhang
  * @date 2018/3/21
  */
 public class BorrowDTO extends BaseObject {

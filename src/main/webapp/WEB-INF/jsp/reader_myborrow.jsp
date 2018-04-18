@@ -13,7 +13,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="<%=request.getContextPath() %>/static/book-js/show.js"></script>
     <link href="<%=request.getContextPath() %>/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="<%=request.getContextPath() %>/static/book-css/book_index.css" rel="stylesheet">
     <script src="<%=request.getContextPath() %>/static/bootstrap/js/bootstrap.min.js"></script>

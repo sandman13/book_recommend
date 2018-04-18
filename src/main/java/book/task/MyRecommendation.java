@@ -25,7 +25,7 @@ import javax.annotation.Resource;
 import java.util.*;
 
 /**
- * @author yutong song
+ * @author hui zhang
  * @date 2018/3/22
  */
 @Component
@@ -69,8 +69,7 @@ public class MyRecommendation {
         //记录某一个人是否看过某一本书,如果看过则分数使用最近的评分.
         //同时还记录上一次修改的位置
         Map<String,Integer> hasSeenTheBook=Maps.newHashMap();
-        //记录下热门的三本书
-        List<String> HotBookList = Lists.newArrayList();
+
         //如果书名和作者都一样认为是同一本书
         recommendDao.deleteBefore();
         for (BorrowDO borrowDO : borrowDOList) {
@@ -104,25 +103,29 @@ public class MyRecommendation {
         }
         System.out.println("recommendDOList:"+recommendDOList);
         System.out.println("map:" + bookCountMap);
-        Queue<Map.Entry<String,Integer>> priorityQueue=new PriorityQueue<>((a,b)->(b.getValue()-a.getValue()));
+        Queue<Map.Entry<String,Integer>> priorityQueue=new PriorityQueue<>((a,b)->(b.getValue().compareTo(a.getValue())));
         priorityQueue.addAll(bookCountMap.entrySet());
         System.out.println("priorityQueue:"+priorityQueue);
-        Queue<Map.Entry<String,Double>>bookDOQueue=new PriorityQueue<>((a,b)->((int)(b.getValue()-a.getValue())));
+        Queue<Map.Entry<String,Double>>bookDOQueue=new PriorityQueue<>((a,b)->((b.getValue().compareTo(a.getValue()))));
         for (UserDO userDO : userDOList) {
             //对于每一部电影,求出有哪些人看过这场电影,根据关联度求出人->电影->分数,最后再按照分数排序
             //(对于每一个人)扫描都看过的书,求相似度,最后从他们看过我没看过的书里面求出相似度
+            priorityQueue.clear();
+            priorityQueue.addAll(bookCountMap.entrySet());
             Map<String, Double> bookCompare = Maps.newHashMap();
             for (BookDO bookDO : bookDOList) {
+
+                //TODO 若该用户看过这本书则不用评分了,肯定不需要推荐
+                if (neednot(userDO,bookDO,recommendDOList)){
+                    continue;
+                }
                 //求出有哪些人看过这本书
                 List<RecommendDO> SeenTheBook = find(bookDO, recommendDOList);
                 System.out.println("SeenTheBook:" + SeenTheBook+"bookName:"+bookDO.getBookName());
                 if (CollectionUtils.isEmpty(SeenTheBook)) {
                     continue;
                 }
-                //TODO 若该用户看过这本书则不用评分了,肯定不需要推荐
-                if (neednot(userDO,bookDO,recommendDOList)){
-                    continue;
-                }
+
                 //recommend列表一个人看过一本书只会出现一次,所以确定书籍后recommend对应的是人
                 double rate = 0;
                 double weightSum = 0;
@@ -140,16 +143,21 @@ public class MyRecommendation {
                     System.out.println("用户"+userDO.getUserId()+"对于"+bookDO.getBookName()+"rate:"+rate);
                     weightSum = weightSum + weight;
                 }
-                //获取该用户对于每一本书的评价得分
-                double score = rate / weightSum;
-                System.out.println("用户"+userDO.getUserId()+"对于"+bookDO.getBookName()+score);
-                //最后所有书的得分求出最大值
-                bookCompare.put(Joiner.on("-").skipNulls().join(bookDO.getBookName(), bookDO.getAuthor()), score);
+                if (weightSum!=0) {
+                    //获取该用户对于每一本书的评价得分
+                    double score = rate / weightSum;
+                    System.out.println("用户" + userDO.getUserId() + "对于" + bookDO.getBookName() + score);
+                    //最后所有书的得分求出最大值
+                    bookCompare.put(Joiner.on("-").skipNulls().join(bookDO.getBookName(), bookDO.getAuthor()), score);
+                }
             }
+            bookDOQueue.clear();
             bookDOQueue.addAll(bookCompare.entrySet());
-            System.out.println("bookDOQueue" + bookDOQueue);
+            System.out.println("最后推荐列表:,userId"+userDO.getUserId()+","+"bookDOQueue:" + bookDOQueue);
             //取前三放置在数据库里面
             int count = 0;
+            //判断推荐了那些书
+            List<String>recommendList=Lists.newArrayList();
             while (!bookDOQueue.isEmpty() && count < 3) {
                 String mix = bookDOQueue.poll().getKey();
                 Iterator<String> iterator = Splitter.on("-").split(mix).iterator();
@@ -159,8 +167,10 @@ public class MyRecommendation {
                 }
                 //添加进入数据库
                 pushToDataBase(stringList.get(0), stringList.get(1), userDO.getUserId());
+                recommendList.add(Joiner.on("-").skipNulls().join(stringList.get(0),stringList.get(1)));
                 count++;
             }
+            System.out.println("the rest:"+count);
             //不够的使用热销补齐
             while (count < 3&&!priorityQueue.isEmpty()) {
                 Map.Entry<String, Integer> entry = priorityQueue.poll();
@@ -172,12 +182,37 @@ public class MyRecommendation {
                 while (iterator.hasNext()) {
                     stringList.add(iterator.next());
                 }
+                if (hotFilter(userDO,stringList.get(0),stringList.get(1),recommendDOList)){
+                    continue;
+                }
+                if (recommendList.contains(Joiner.on("-").skipNulls().join(stringList.get(0),stringList.get(1)))){
+                    continue;
+                }
+                recommendList.add(Joiner.on("-").skipNulls().join(stringList.get(0),stringList.get(1)));
                 pushToDataBase(stringList.get(0), stringList.get(1), userDO.getUserId());
                 count++;
             }
 
         }
     }
+
+    /**
+     * 热销过滤器
+     * @param userDO
+     * @param s
+     * @param s1
+     * @param recommendDOListBase
+     * @return
+     */
+    private boolean hotFilter(UserDO userDO, String s, String s1, List<RecommendDO> recommendDOListBase) {
+        for (RecommendDO recommendDO : recommendDOListBase) {
+            if (recommendDO.getUserId() == userDO.getUserId() && Joiner.on("-").skipNulls().join(s,s1).equals(recommendDO.getBookId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     /**
      * 判断该用户是否需要评分
@@ -256,7 +291,7 @@ public class MyRecommendation {
         if ((recommendDORecommendDOMapA.size() == 0) || (recommendDORecommendDOMapB.size() == 0)) {
             throw new BusinessException("a,b没有评过分");
         }
-        //求出a,b看过电影的并集
+        //求出a,b看过电影的交集
         Set<String> recommendDOSet = Sets.intersection(recommendDORecommendDOMapA.keySet(), recommendDORecommendDOMapB.keySet());
         if (recommendDOSet.size() == 0) {
             throw new BusinessException("a,b没有看过相同的书籍");

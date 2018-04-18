@@ -3,7 +3,7 @@ package book.domain.dataobject;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * @author yutong song
+ * @author hui zhang
  * @date 2018/3/22
  */
 public class RecommendDO {

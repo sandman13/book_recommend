@@ -5,7 +5,7 @@ import book.domain.BaseObject;
 import java.util.Date;
 
 /**
- * @author yutong song
+ * @author hui zhang
  * @date 2018/3/20
  */
 public class UserDO extends BaseObject{

@@ -13,9 +13,9 @@
 <head>
     <meta charset="utf-8">
     <title>图书管理系统</title>
-    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="<%= request.getContextPath()%>/static/bootstrap/css/bootstrap.min.css">
+    <script src="<%= request.getContextPath() %>/static/book-js/show.js"></script>
+    <script src="<%= request.getContextPath()%>/static/bootstrap/js/bootstrap.min.js"></script>
     <script>
 
         function ShowTip(tip, type) {
@@ -120,8 +120,8 @@
                 <th>邮箱</th>
                 <th>手机号</th>
                 <th>修改人</th>
-                <th>创建事件</th>
-                <th>最后修改事件</th>
+                <th>创建时间</th>
+                <th>最后修改时间</th>
                 <th>操作类型</th>
             </tr>
             </thead>

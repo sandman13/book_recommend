@@ -5,7 +5,7 @@ import book.domain.dataobject.BorrowDO;
 import java.util.List;
 
 /**
- * @author yutong song
+ * @author hui zhang
  * @date 2018/3/21
  */
 public interface BorrowDao {

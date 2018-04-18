@@ -14,6 +14,7 @@ import com.github.pagehelper.PageInfo;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import net.sf.jsqlparser.statement.select.Join;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author yutong song
+ * @author hui zhang
  * @date 2018/3/20
  */
 @Service(value = "bookInfoService")
@@ -64,8 +65,18 @@ public class BookInfoServiceImpl implements BookInfoService {
     @Override
     public List<BookDTO> queryBookByBookName(String bookName) {
         LoggerUtil.info(LOGGER,"enter in BookInfoService[queryBookByBookName],bookName:{0}",bookName);
-        List<BookDO> bookDOList=bookDao.listBooksByName(bookName);
-        return convertDOsTODTOs(bookDOList);
+        List<BookDO> bookDOList=bookDao.listBooksByName(Joiner.on("").skipNulls().join("%",bookName,"%"));
+        return convertDOsTODTOsWithoutMap(bookDOList);
+    }
+
+    private List<BookDTO> convertDOsTODTOsWithoutMap(List<BookDO> bookDOList) {
+        List<BookDTO> bookDTOList = Lists.newArrayList();
+        if (!CollectionUtils.isEmpty(bookDOList)) {
+            for (BookDO bookDO : bookDOList) {
+                bookDTOList.add(convertDOTODTO(bookDO));
+            }
+        }
+        return bookDTOList;
     }
 
     @Override
@@ -126,7 +137,7 @@ public class BookInfoServiceImpl implements BookInfoService {
         location= StringUtils.isEmpty(location)?null:'%'+location+'%';
         PageInfo<BookDO> bookDOPageInfo=bookDao.queryByMultiConditions(publisher,introduction,author,location,page);
         PageInfo<BookDTO>bookDTOPageInfo=new PageInfo<>();
-        bookDTOPageInfo.setList(convertDOsTODTOs(bookDOPageInfo.getList()));
+        bookDTOPageInfo.setList(convertDOsTODTOsWithoutMap(bookDOPageInfo.getList()));
         bookDTOPageInfo.setPrePage(bookDOPageInfo.getPrePage());
         bookDTOPageInfo.setNextPage(bookDOPageInfo.getNextPage());
         bookDTOPageInfo.setHasNextPage(bookDOPageInfo.isHasNextPage());

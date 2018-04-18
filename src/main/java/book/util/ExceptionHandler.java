@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import java.text.MessageFormat;
 
 /**
- * @author yutong song
+ * @author hui zhang
  * @date 2018/3/20
  */
 public class ExceptionHandler {

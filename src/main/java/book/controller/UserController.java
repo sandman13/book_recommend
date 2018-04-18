@@ -66,7 +66,7 @@ public class UserController {
             }
             userService.updateUser(myuserDTO);
             result.setSuccess(true);
-            return "reader_information";
+            return "redirect:/admin/user";
         } catch (BusinessException be) {
             ExceptionHandler.handleBusinessException(LOGGER, result, be, "更新用户信息失败");
         } catch (Exception e) {

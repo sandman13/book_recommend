@@ -4,7 +4,7 @@ import book.domain.BaseObject;
 
 
 /**
- * @author yutong song
+ * @author hui zhang
  * @date 2018/3/20
  */
 public class BookDTO extends BaseObject {

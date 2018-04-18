@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
- * @author yutong song
+ * @author hui zhang
  * @date 2018/3/20
  */
 public class DateUtils {

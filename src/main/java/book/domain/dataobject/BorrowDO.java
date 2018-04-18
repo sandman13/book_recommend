@@ -7,7 +7,7 @@ import java.util.Date;
 /**
  * 借阅实体对象
  *
- * @author yutong song
+ * @author hui zhang
  * @date 2018/3/21
  */
 public class BorrowDO extends BaseObject {

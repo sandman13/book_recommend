@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!--设置名字空间-->
-<mapper namespace="songyutong">
+<mapper namespace="zhanghui">
 
     <!--设置返回结果集,将数据库字段和java对象字段建立联系,type是java对象路径,id是结果集的唯一标识-->
     <resultMap type="BorrowDO" id="BORROW">

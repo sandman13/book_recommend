@@ -14,6 +14,7 @@ import book.util.ExceptionHandler;
 import book.util.LoggerUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -214,7 +215,9 @@ public class AdminController {
                  return "redirect:/login";
              }
              UserDTO myUserDTO=userService.queryByName(username);
-             model.addAttribute("userList",myUserDTO);
+             List<UserDTO> userDTOList= Lists.newArrayList();
+             userDTOList.add(myUserDTO);
+             model.addAttribute("userList",userDTOList);
              result.setSuccess(true);
              return "admin_user";
          }catch(BusinessException be){

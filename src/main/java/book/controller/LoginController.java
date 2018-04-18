@@ -18,7 +18,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 /**
- * @author yutong song
+ * @author hui zhang
  * @date 2018/3/19
  */
 @Controller

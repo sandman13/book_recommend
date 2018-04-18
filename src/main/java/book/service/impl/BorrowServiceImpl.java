@@ -30,7 +30,7 @@ import java.util.List;
 import book.*;
 
 /**
- * @author yutong song
+ * @author hui zhang
  * @date 2018/3/21
  */
 @Service(value = "borrowService")
@@ -51,6 +51,7 @@ public class BorrowServiceImpl implements BorrowService {
     private UserDao userDao;
 
     public ListAndB listAndB=new ListAndB();
+
     /**
      * 借阅图书
      *
@@ -166,9 +167,24 @@ public class BorrowServiceImpl implements BorrowService {
         LoggerUtil.info(LOGGER,"enter in BorrowServiceImpl[updateStatus],borrowId:{0}",borrowId);
         BorrowDO borrowDO = borrowDao.queryByBorrowId(borrowId);
         ValidateUtils.checkNotNull(borrowDO, "待更新的记录不存在");
-        borrowDO.setBorrowStatus("DELETED");
-        long id=borrowDao.updateBorrow(borrowDO);
-        return id>0;
+        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus transactionStatus) {
+                try {
+                    BookDO bookDO = bookDao.queryBookByBookId(borrowDO.getBookId());
+                    bookDO.setBookStatus(StatusEnum.CAN_BORROW.name());
+                    long id = bookDao.updateBookByBookId(bookDO);
+                    if (id > 0) {
+                        borrowDO.setBorrowStatus("DELETED");
+                        return borrowDao.updateBorrow(borrowDO) > 0;
+                    }
+                } catch (Exception ex) {
+                    LoggerUtil.error(ex, LOGGER, "更新状态失败");
+                    return false;
+                }
+                return false;
+            }
+        });
     }
 
     private BookDTO convertToDTO(BookDO bookDO) {
@@ -184,6 +200,7 @@ public class BorrowServiceImpl implements BorrowService {
             bookDTO.setPubdate(DateUtils.format(bookDO.getPubdate()));
             bookDTO.setPublisher(bookDO.getPublisher());
             bookDTO.setLocation(bookDO.getLocation());
+            bookDTO.setPhotoUrl(bookDO.getPhotoUrl());
             return bookDTO;
         }
 

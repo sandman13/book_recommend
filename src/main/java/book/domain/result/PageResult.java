@@ -3,7 +3,7 @@ package book.domain.result;
 import java.util.List;
 
 /**
- * @author yutong song
+ * @author hui zhang
  * @date 2018/4/16
  */
 public class PageResult<T> extends BaseResult {

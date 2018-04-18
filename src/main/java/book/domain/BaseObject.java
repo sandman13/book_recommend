@@ -8,7 +8,7 @@ import java.io.Serializable;
 /**
  * 基础领域模型
  * 封装序列化和toString方法
- * @author yutong song
+ * @author hui zhang
  * @date 2018/3/20
  */
 public class BaseObject implements Serializable {

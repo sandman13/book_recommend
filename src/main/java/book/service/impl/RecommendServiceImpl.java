@@ -15,7 +15,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * @author yutong song
+ * @author hui zhang
  * @date 2018/3/22
  */
 @Service(value = "recommendService")

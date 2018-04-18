@@ -8,10 +8,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
+    
     <title>用户登录</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script src="<%= request.getContextPath()%>/static/book-js/show.js"></script>
     <link href="<%=request.getContextPath() %>/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <script src="<%=request.getContextPath() %>/static/bootstrap/js/bootstrap.min.js"></script>
     <script src="<%=request.getContextPath() %>/static/book-js/iframe.js"></script>

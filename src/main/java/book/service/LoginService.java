@@ -3,7 +3,7 @@ package book.service;
 import book.domain.dto.UserDTO;
 
 /**
- * @author yutong song
+ * @author hui zhang
  * @date 2018/3/20
  */
 public interface LoginService {

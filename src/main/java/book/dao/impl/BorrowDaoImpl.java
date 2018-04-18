@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * @author yutong song
+ * @author hui zhang
  * @date 2018/3/21
  */
 @Repository(value = "borrowDao")
@@ -22,37 +22,37 @@ public class BorrowDaoImpl extends CommonDao implements BorrowDao {
     @Override
     public long addBorrowRecord(BorrowDO borrowDO) {
         LoggerUtil.info(LOGGER, "enter in BorrowDaoImpl[addBorrowRecord],borrowDo:{0}", borrowDO);
-        getSqlSession().insert("songyutong.addBorrowRecord", borrowDO);
+        getSqlSession().insert("zhanghui.addBorrowRecord", borrowDO);
         return borrowDO.getBorrowId();
     }
 
     @Override
     public List<BorrowDO> listByUserId(long userId) {
         LoggerUtil.info(LOGGER, "enter in BorrowDaoImpl[listByUserId],userId:{0}", userId);
-        return getSqlSession().selectList("songyutong.listByUserId", userId);
+        return getSqlSession().selectList("zhanghui.listByUserId", userId);
     }
 
     @Override
     public long updateBorrow(BorrowDO borrowDO) {
         LoggerUtil.info(LOGGER,"enter in BorrowDaoImpl[updateBorrow],borrow:{0}",borrowDO);
-        return getSqlSession().update("songyutong.updateByBorrowId",borrowDO);
+        return getSqlSession().update("zhanghui.updateByBorrowId",borrowDO);
     }
 
     @Override
     public BorrowDO queryByBorrowId(long borrowId) {
         LoggerUtil.info(LOGGER,"enter in BorrowDaoImpl[queryByBorrowId,borrowId:{0}",borrowId);
-        return getSqlSession().selectOne("songyutong.queryByBorrowId",borrowId);
+        return getSqlSession().selectOne("zhanghui.queryByBorrowId",borrowId);
     }
 
     @Override
     public List<BorrowDO> listAllBorrows() {
         LoggerUtil.info(LOGGER,"enter in BorrowDaoImpl[listAllBorrows]");
-        return getSqlSession().selectList("songyutong.listAllBorrows");
+        return getSqlSession().selectList("zhanghui.listAllBorrows");
     }
 
     @Override
     public long updateStatus(BorrowDO borrowDO) {
         LoggerUtil.info(LOGGER,"enter in BorrowDaoImpl[updateStatus],borrowDO:{0}",borrowDO);
-        return getSqlSession().update("songyutong.updateByBorrowId",borrowDO);
+        return getSqlSession().update("zhanghui.updateByBorrowId",borrowDO);
     }
 }

@@ -1,7 +1,7 @@
 package book.domain.result;
 
 /**
- * @author yutong song
+ * @author hui zhang
  * @date 2018/3/20
  */
 public class SimpleResult<T> extends BaseResult {

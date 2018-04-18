@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author yutong song
+ * @author hui zhang
  * @date 2018/3/20
  */
 @Repository(value = "bookDao")
@@ -27,7 +27,7 @@ public class BookDaoImpl extends CommonDao implements BookDao {
     public PageInfo<BookDO> listAllBooksWithPage(int pageNumber) {
         LoggerUtil.info(LOGGER,"enter in BookDaoImpl[listAllBooks]");
         PageHelper.startPage(pageNumber,8);
-        List<BookDO> bookDOList = getSqlSession().selectList("songyutong.listAllBooks");
+        List<BookDO> bookDOList = getSqlSession().selectList("zhanghui.listAllBooks");
         PageInfo<BookDO> pageInfo=new PageInfo<>(bookDOList);
         return pageInfo;
     }
@@ -35,19 +35,19 @@ public class BookDaoImpl extends CommonDao implements BookDao {
     @Override
     public List<BookDO> listAllBooks() {
         LoggerUtil.info(LOGGER,"enter in BookDaoImpl[listAllBooks]");
-        return  getSqlSession().selectList("songyutong.listAllBooks");
+        return  getSqlSession().selectList("zhanghui.listAllBooks");
     }
 
     @Override
     public List<BookDO> listBooksByName(String bookName) {
         LoggerUtil.info(LOGGER, "enter in BookDaoImpl[listBooksByName],bookName:{0}", bookName);
-        return getSqlSession().selectList("songyutong.listBooksByName",bookName);
+        return getSqlSession().selectList("zhanghui.listBooksByName",bookName);
     }
 
     @Override
     public List<BookDO> listBooksByAuthor(String author) {
         LoggerUtil.info(LOGGER,"enter in BookDaoImpl[listBooksByAuthor],author:{0}",author);
-        return getSqlSession().selectList("songyutong.listBooksByAuthor",author);
+        return getSqlSession().selectList("zhanghui.listBooksByAuthor",author);
     }
 
     /**
@@ -63,13 +63,13 @@ public class BookDaoImpl extends CommonDao implements BookDao {
         Map<String,String> map= Maps.newHashMap();
         map.put("bookName",bookName);
         map.put("author",author);
-        return getSqlSession().selectList("songyutong.listBooksByNameAndAuthor",map);
+        return getSqlSession().selectList("zhanghui.listBooksByNameAndAuthor",map);
     }
 
     @Override
     public BookDO queryBookByBookId(long bookId) {
         LoggerUtil.info(LOGGER,"enter in BookDaoImpl[queryByBookId],bookId:{0}",bookId);
-        return getSqlSession().selectOne("songyutong.queryBookById",bookId);
+        return getSqlSession().selectOne("zhanghui.queryBookById",bookId);
     }
 
     /**
@@ -81,19 +81,19 @@ public class BookDaoImpl extends CommonDao implements BookDao {
     @Override
     public long updateBookByBookId(BookDO bookDO) {
         LoggerUtil.info(LOGGER,"enter in BookDaoImpl[updateBookByBookId],bookDO:{0}",bookDO);
-        return getSqlSession().update("songyutong.updateBookById",bookDO);
+        return getSqlSession().update("zhanghui.updateBookById",bookDO);
     }
 
     @Override
     public long insertBook(BookDO bookDO) {
         LoggerUtil.info(LOGGER,"enter in BookDaoImpl[insertBook],bookDO{0}",bookDO);
-        return getSqlSession().insert("songyutong.insertBook",bookDO);
+        return getSqlSession().insert("zhanghui.insertBook",bookDO);
     }
 
     @Override
     public long deleteBook(long bookId) {
         LoggerUtil.info(LOGGER,"enter in BookDaoImpl[deleteBook],bookId{0}",bookId);
-        return getSqlSession().delete("songyutong.deleteBook",bookId);
+        return getSqlSession().delete("zhanghui.deleteBook",bookId);
     }
 
     @Override
@@ -105,7 +105,7 @@ public class BookDaoImpl extends CommonDao implements BookDao {
         map.put("author",author);
         map.put("location",location);
         PageHelper.startPage(page,8);
-        List<BookDO> bookDOList = getSqlSession().selectList("songyutong.queryByMultiConditions", map);
+        List<BookDO> bookDOList = getSqlSession().selectList("zhanghui.queryByMultiConditions", map);
         PageInfo<BookDO> pageInfo=new PageInfo<>(bookDOList);
         return pageInfo;
     }
