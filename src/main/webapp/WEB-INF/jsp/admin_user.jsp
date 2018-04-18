@@ -74,7 +74,7 @@
             <ul class="nav navbar-nav">
                 <li class="active"><a href="/admin/index">书籍管理</a></li>
                 <li><a href="/admin/user">用户管理</a></li>
-                <li><a href="/admin/order">订阅管理</a></li>
+                <li><a href="/admin/orderList">订阅管理</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span>&nbsp退出</a></li>
@@ -127,7 +127,7 @@
             </thead>
             <tbody>
             <%
-                List<UserDTO> userDTOList = (List<UserDTO>) request.getAttribute("userList");
+                List<UserDTO> userDTOList =(List<UserDTO>)request.getAttribute("userList");
                 if (userDTOList != null) {
                     for (UserDTO userDTO : userDTOList) {
             %>
