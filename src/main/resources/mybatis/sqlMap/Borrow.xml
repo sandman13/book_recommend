@@ -25,7 +25,7 @@
     </insert>
 
     <select id="listByUserId" parameterType="book.domain.dataobject.BorrowDO" resultMap="BORROW">
-        SELECT * FROM borrow where user_id=#{userId} and borrow_status!='DELETED'
+        SELECT * FROM borrow where user_id=#{userId}
     </select>
 
 
@@ -34,11 +34,11 @@
     </select>
 
     <update id="updateByBorrowId" parameterType="book.domain.dataobject.BorrowDO">
-        UPDATE borrow SET borrow_date=#{borrowDate},gmt_modified=CURRENT_TIMESTAMP ,goal=#{goal} where borrow_id=#{borrowId}
+        UPDATE borrow SET borrow_date=#{borrowDate},gmt_modified=CURRENT_TIMESTAMP ,goal=#{goal},borrow_status=#{borrowStatus} where borrow_id=#{borrowId}
     </update>
 
     <select id="listAllBorrows" resultMap="BORROW">
-        SELECT * FROM  borrow where borrow_status!='DELETED'
+        SELECT * FROM  borrow
     </select>
 
 </mapper>

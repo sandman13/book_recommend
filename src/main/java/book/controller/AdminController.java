@@ -297,7 +297,7 @@ public class AdminController {
              model.addAttribute("username",username);
              model.addAttribute("borrowDTOList",borrowDTOList);
              result.setSuccess(true);
-             return "admin_order";
+             return "admin_order_name";
          }catch(BusinessException be){
              ExceptionHandler.handleBusinessException(LOGGER,result,be,"查询借阅记录失败");
          }catch(Exception e){
@@ -325,7 +325,7 @@ public class AdminController {
              }
              borrowService.updateStatus(borrowId);
              result.setSuccess(true);
-             return "admin_order";
+             return "redirect:/admin/orderList";
          }catch(BusinessException be){
              ExceptionHandler.handleBusinessException(LOGGER,result,be,"更改借阅状态失败");
          }catch(Exception e){
