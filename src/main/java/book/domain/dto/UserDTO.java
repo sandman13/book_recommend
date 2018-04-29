@@ -28,6 +28,12 @@ public class UserDTO {
 
     private String phoneNumber;
 
+    private Integer age;
+
+    private Integer sex;
+
+    private String profession;
+
     public String getEmail() {
         return email;
     }
@@ -98,5 +104,29 @@ public class UserDTO {
 
     public void setModifier(String modifier) {
         this.modifier = modifier;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public Integer getSex() {
+        return sex;
+    }
+
+    public void setSex(Integer sex) {
+        this.sex = sex;
+    }
+
+    public String getProfession() {
+        return profession;
+    }
+
+    public void setProfession(String profession) {
+        this.profession = profession;
     }
 }

@@ -92,6 +92,7 @@ public class AdminController {
             if (userDTO == null) {
                 return "redirect:/login";
             }
+            //先将本地图片文件上传到oss，上传成功后将生成的图片URL存到bookDTO中，再更新
           oss.upload(multipartFile.getOriginalFilename(),multipartFile.getInputStream());
           bookDTO.setPhotoUrl(oss.getURL(multipartFile.getOriginalFilename()));
           bookInfoService.updateBookByBookId(bookDTO);
@@ -160,6 +161,13 @@ public class AdminController {
         }
         return "error";
     }
+
+    /**
+     * 展示所有用户
+     * @param httpSession
+     * @param model
+     * @return
+     */
     @RequestMapping(value = "/admin/user")
     public String listAllUsers(HttpSession httpSession,Model model)
     {
@@ -182,7 +190,12 @@ public class AdminController {
         return "error";
     }
 
-
+    /**
+     * 管理员删除用户
+     * @param httpSession
+     * @param UserId
+     * @return
+     */
     @RequestMapping(value = "/admin/delete/user/{UserId}")
     public String deleteUser(HttpSession httpSession,@PathVariable long UserId)
     {
@@ -204,6 +217,13 @@ public class AdminController {
         return "error";
     }
 
+    /**
+     * 根据用户名查找用户
+     * @param httpSession
+     * @param model
+     * @param username
+     * @return
+     */
     @RequestMapping(value = "/admin/queryByName")
      public String queryByUserName(HttpSession httpSession,Model model,String username)
      {
@@ -227,6 +247,14 @@ public class AdminController {
          }
          return "error";
      }
+
+    /**
+     * 管理员根据书名查找书
+     * @param httpSession
+     * @param bookName
+     * @param model
+     * @return
+     */
      @RequestMapping(value = "/admin/queryBook")
      public String queryByBookName(HttpSession httpSession,String bookName,Model model)
      {
@@ -311,7 +339,7 @@ public class AdminController {
      }
 
     /**
-     * 管理员更改borrow_status
+     * 管理员还书
      * @param httpSession
      * @param borrowId
      * @return

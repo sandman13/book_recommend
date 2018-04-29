@@ -54,7 +54,7 @@ public class MyRecommendation {
      * 1,首先计算出借阅量最大的三本书（过滤不存在的书籍)
      * 2,获取用户列表
      * 3,获取书籍列表
-     * 4,获取订阅列表(过滤没有打分的书籍,过滤用户和书籍不存在的列表)
+     * 4,获取借阅列表(过滤没有打分的书籍,过滤用户和书籍不存在的列表)
      * 5,协同过滤算法后给用户推荐评分最高的三本书
      * 6,不够的由借阅量最大的三本书补齐
      */
@@ -64,14 +64,18 @@ public class MyRecommendation {
         List<BookDO> bookDOList = bookDao.listAllBooks();
         List<BorrowDO> borrowDOList = borrowDao.listAllBorrows();
         List<RecommendDO> recommendDOList = Lists.newArrayList();
+
         //记录每一本书被看过的次数
         Map<String, Integer> bookCountMap = Maps.newHashMap();
+
         //记录某一个人是否看过某一本书,如果看过则分数使用最近的评分.
         //同时还记录上一次修改的位置
         Map<String,Integer> hasSeenTheBook=Maps.newHashMap();
 
-        //如果书名和作者都一样认为是同一本书
         recommendDao.deleteBefore();
+        /**
+         * 进行数据清洗，生成处理后的借阅列表
+         */
         for (BorrowDO borrowDO : borrowDOList) {
             BookDO bookDO = bookDao.queryBookByBookId(borrowDO.getBookId());
             UserDO userDO = userDao.queryByUserId(borrowDO.getUserId());
@@ -80,12 +84,15 @@ public class MyRecommendation {
                 continue;
             }
             //TODO 这里如果书名里面有-可能会有bug
+            //如果书名和作者都一样认为是同一本书,拼接成“bookName-author”
             String key = Joiner.on("-").skipNulls().join(bookDO.getBookName(), bookDO.getAuthor());
             if (bookCountMap.get(key) == null) {
+                //这本书第一次被读
                 bookCountMap.put(key, 1);
-                //读者看过某本书(这里的书指的是书名和作者)
+                //读者看过某本书，拼接为“userId-bookName-author”，并且记下这条记录的下标
                 hasSeenTheBook.put(Joiner.on("-").skipNulls().join(userDO.getUserId(),key),recommendDOList.size());
             } else {
+                //不是第一次看这本书
                 int count = bookCountMap.get(key);
                 bookCountMap.put(key, count + 1);
                 //多次评论同一个书籍使用最后一次评分为准
@@ -103,14 +110,16 @@ public class MyRecommendation {
         }
         System.out.println("recommendDOList:"+recommendDOList);
         System.out.println("map:" + bookCountMap);
+        //一个借阅量的最大堆
         Queue<Map.Entry<String,Integer>> priorityQueue=new PriorityQueue<>((a,b)->(b.getValue().compareTo(a.getValue())));
         priorityQueue.addAll(bookCountMap.entrySet());
         System.out.println("priorityQueue:"+priorityQueue);
+        //针对每个用户对每本书评分的最大堆
         Queue<Map.Entry<String,Double>>bookDOQueue=new PriorityQueue<>((a,b)->((b.getValue().compareTo(a.getValue()))));
         for (UserDO userDO : userDOList) {
-            //对于每一部电影,求出有哪些人看过这场电影,根据关联度求出人->电影->分数,最后再按照分数排序
-            //(对于每一个人)扫描都看过的书,求相似度,最后从他们看过我没看过的书里面求出相似度
+            //对于每一本书,求出有哪些人看过这本书,再分别求该用户与每一个人的相似度
             priorityQueue.clear();
+            //兜底，每次都重新计算借阅量最大堆，防止为这个用户推荐的图书不够三本
             priorityQueue.addAll(bookCountMap.entrySet());
             Map<String, Double> bookCompare = Maps.newHashMap();
             for (BookDO bookDO : bookDOList) {
@@ -126,7 +135,7 @@ public class MyRecommendation {
                     continue;
                 }
 
-                //recommend列表一个人看过一本书只会出现一次,所以确定书籍后recommend对应的是人
+                //recommend列表代表每一个人
                 double rate = 0;
                 double weightSum = 0;
                 for (RecommendDO recommendDO : SeenTheBook) {
@@ -159,7 +168,9 @@ public class MyRecommendation {
             //判断推荐了那些书
             List<String>recommendList=Lists.newArrayList();
             while (!bookDOQueue.isEmpty() && count < 3) {
+                //从推荐最大堆中取出键值对
                 String mix = bookDOQueue.poll().getKey();
+                //分割出bookName，author
                 Iterator<String> iterator = Splitter.on("-").split(mix).iterator();
                 List<String> stringList = Lists.newArrayList();
                 while (iterator.hasNext()) {
@@ -182,9 +193,11 @@ public class MyRecommendation {
                 while (iterator.hasNext()) {
                     stringList.add(iterator.next());
                 }
+                //如果借阅最大堆中取出的书读者已经看过，则跳过
                 if (hotFilter(userDO,stringList.get(0),stringList.get(1),recommendDOList)){
                     continue;
                 }
+                //如果这本书已经在推荐列表中，则跳过
                 if (recommendList.contains(Joiner.on("-").skipNulls().join(stringList.get(0),stringList.get(1)))){
                     continue;
                 }
@@ -277,7 +290,7 @@ public class MyRecommendation {
         Map<String, RecommendDO> recommendDORecommendDOMapA = Maps.newHashMap();
         Map<String, RecommendDO> recommendDORecommendDOMapB = Maps.newHashMap();
 
-        //1,分别找出a,b看过的电影
+        //1,分别找出a,b看过的书籍
         for (RecommendDO recommendDO : recommendDOListBase) {
             if (recommendDO.getUserId() == userA.getUserId()) {
                 recommendDORecommendDOMapA.put(recommendDO.getBookId(), recommendDO);
@@ -291,7 +304,7 @@ public class MyRecommendation {
         if ((recommendDORecommendDOMapA.size() == 0) || (recommendDORecommendDOMapB.size() == 0)) {
             throw new BusinessException("a,b没有评过分");
         }
-        //求出a,b看过电影的交集
+        //求出a,b看过书籍的交集
         Set<String> recommendDOSet = Sets.intersection(recommendDORecommendDOMapA.keySet(), recommendDORecommendDOMapB.keySet());
         if (recommendDOSet.size() == 0) {
             throw new BusinessException("a,b没有看过相同的书籍");

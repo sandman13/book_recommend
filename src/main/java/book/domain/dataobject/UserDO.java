@@ -1,6 +1,7 @@
 package book.domain.dataobject;
 
 import book.domain.BaseObject;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Date;
 
@@ -31,6 +32,12 @@ public class UserDO extends BaseObject{
     private String email;
 
     private String phoneNumber;
+
+    private Integer age;
+
+    private Integer sex;
+
+    private String profession;
 
     public String getEmail() {
         return email;
@@ -102,5 +109,38 @@ public class UserDO extends BaseObject{
 
     public void setModifier(String modifier) {
         this.modifier = modifier;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public Integer getSex() {
+        return sex;
+    }
+
+    public void setSex(Integer sex) {
+        this.sex = sex;
+    }
+
+    public String getProfession() {
+        return profession;
+    }
+
+    public void setProfession(String profession) {
+        this.profession = profession;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof  UserDO){
+            UserDO userDO=(UserDO)obj;
+            return StringUtils.equals(String.valueOf(age),String.valueOf(userDO.getAge()))&&StringUtils.equals(String.valueOf(sex),String.valueOf(userDO.getSex()))&&StringUtils.equals(profession,userDO.getProfession());
+        }
+        return false;
     }
 }

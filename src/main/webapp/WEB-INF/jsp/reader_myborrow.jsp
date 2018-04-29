@@ -59,10 +59,7 @@
             </ul>
             <ul class="nav nav-sidebar">
                 <li class="active"><a href="#">使用knn推荐书籍</a></li>
-                <li><a href="#">萨尔</a></li>
-                <li><a href="#">伐木机</a></li>
-                <li><a href="#">斯温</a></li>
-                <li><a href="#">拍拍熊</a></li>
+                <li><a href="#">待扩展</a></li>
             </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">

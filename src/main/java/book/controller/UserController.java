@@ -28,6 +28,12 @@ public class UserController {
 
     private static final org.slf4j.Logger LOGGER= LoggerFactory.getLogger(UserController.class);
 
+    /**
+     * 展示此用户信息
+     * @param httpSession
+     * @param model
+     * @return
+     */
     @RequestMapping(value = "/reader/info")
     public String toReader(HttpSession httpSession,Model model)
     {
@@ -50,6 +56,12 @@ public class UserController {
         return "error";
     }
 
+    /**
+     * 用户更改个人信息
+     * @param httpSession
+     * @param myuserDTO
+     * @return
+     */
     @RequestMapping(value = "/user/update")
     public String updateUser(HttpSession httpSession,UserDTO myuserDTO){
         BaseResult result = new BaseResult();
@@ -59,6 +71,8 @@ public class UserController {
             if (userDTO == null) {
                 return "redirect:/login";
             }
+            //如果用户是管理员，则可以更改所有人的信息
+            //如果是普通用户，则只能修改自己的信息
             if(!userDTO.getUserStatus().equals(StatusEnum.ADMIN.name()))
             {
                 if(userDTO.getUserId()!=myuserDTO.getUserId())

@@ -36,6 +36,9 @@ public class BookController {
     private RecommendService recommendService;
 
     @RequestMapping(value = "/reader/index", method = RequestMethod.GET)
+    /**
+     * 展示所有书籍，以及推荐的书籍
+     */
     public String listAllBooks(HttpSession httpSession, Model model) {
         BaseResult result=new BaseResult();
         try {
