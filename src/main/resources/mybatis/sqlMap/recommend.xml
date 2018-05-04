@@ -15,6 +15,9 @@
         <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified"/>
         <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate"/>
         <result column="modifier" jdbcType="VARCHAR" property="modifier"/>
+        <result column="sex" jdbcType="INTEGER" property="sex"/>
+        <result column="age" jdbcType="INTEGER" property="age"/>
+        <result column="profession" jdbcType="VARCHAR" property="profession"/>
     </resultMap>
 
     <insert id="addRecommendation" parameterType="book.domain.dataobject.RecommendationDO" useGeneratedKeys="true" keyProperty="recommendId">

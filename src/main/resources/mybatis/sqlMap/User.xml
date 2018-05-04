@@ -17,6 +17,9 @@
         <result column="modifier" jdbcType="VARCHAR" property="modifier"/>
         <result column="email" jdbcType="VARCHAR" property="email"/>
         <result column="phone_number" jdbcType="VARCHAR" property="phoneNumber"/>
+        <result column="sex" jdbcType="INTEGER" property="sex"/>
+        <result column="age" jdbcType="INTEGER" property="age"/>
+        <result column="profession" jdbcType="VARCHAR" property="profession"/>
     </resultMap>
 
     <select id="queryByUserNameAndPassword" resultMap="USER">
@@ -32,11 +35,11 @@
     </select>
 
     <insert id="insertUser"  parameterType="book.domain.dataobject.UserDO" useGeneratedKeys="true" keyProperty="userId">
-        INSERT INTO user(username,password,user_status,gmt_modified,gmt_create,modifier,email,phone_number) VALUES (#{username},#{password},#{userStatus},CURRENT_TIMESTAMP ,CURRENT_TIMESTAMP ,#{modifier},#{email},#{phoneNumber})
+        INSERT INTO user(username,password,user_status,gmt_modified,gmt_create,modifier,email,phone_number,sex,age,profession) VALUES (#{username},#{password},#{userStatus},CURRENT_TIMESTAMP ,CURRENT_TIMESTAMP ,#{modifier},#{email},#{phoneNumber},#{sex},#{age},#{profession})
     </insert>
 
     <update id="updateUser" parameterType="book.domain.dataobject.UserDO" useGeneratedKeys="true" keyProperty="userId">
-        UPDATE user set username=#{username},password=#{password},user_status=#{userStatus},gmt_modified=#{gmtModified},gmt_create=#{gmtCreate},modifier=#{modifier},email=#{email},phone_number=#{phoneNumber} WHERE user_id=#{userId}
+        UPDATE user set username=#{username},password=#{password},user_status=#{userStatus},gmt_modified=#{gmtModified},gmt_create=#{gmtCreate},modifier=#{modifier},email=#{email},phone_number=#{phoneNumber},sex=#{sex},age=#{age},profession=#{profession} WHERE user_id=#{userId}
     </update>
 
     <delete id="deleteUser" parameterType="long">

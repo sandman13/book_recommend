@@ -103,6 +103,7 @@ public class KMeansRecommendation {
 
     }
 
+
     /**
      * 判断质心是否还在变化，若还在变化则返回true
      * @param oldCenterList

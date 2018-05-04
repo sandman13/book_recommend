@@ -80,6 +80,9 @@ public class UserServiceImpl implements UserService {
         userDO.setModifier(userDTO.getModifier());
         userDO.setUserStatus(userDTO.getUserStatus());
         userDO.setPhoneNumber(userDTO.getPhoneNumber());
+        userDO.setAge(userDTO.getAge());
+        userDO.setSex(userDTO.getSex());
+        userDO.setProfession(userDTO.getProfession());
         return userDO;
     }
 
@@ -99,6 +102,9 @@ public class UserServiceImpl implements UserService {
         userDTO.setGmtModified(DateUtils.format(userDO.getGmtModified()));
         userDTO.setModifier(userDO.getModifier());
         userDTO.setPhoneNumber(userDO.getPhoneNumber());
+        userDTO.setAge(userDO.getAge());
+        userDTO.setSex(userDO.getSex());
+        userDTO.setProfession(userDO.getProfession());
         return userDTO;
     }
 

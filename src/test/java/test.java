@@ -35,11 +35,23 @@ public class test {
     @Test
     public void testAdd() {
         List<BorrowDTO> borrowDTOList=Lists.newArrayList();
+        UserDTO userDTO=new UserDTO();
+        userDTO.setUsername("aoliao");
+        userDTO.setProfession("计算机");
+        userDTO.setPassword("111");
+        userDTO.setSex(1);
+        userDTO.setAge(26);
+        userDTO.setEmail("aoliao@126.com");
+        userDTO.setPhoneNumber("15152961723");
+        registerService.insertUser(userDTO);
         borrowDTOList=borrowService.listByUserId(2);
         for(BorrowDTO borrowDTO:borrowDTOList)
         {
             System.out.println(borrowDTO);
         }
+
     }
+
+
 
 }
