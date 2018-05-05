@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -70,7 +71,10 @@ public class KMeansRecommendation {
         //迭代次数
         int count=1;
         //聚类的结果
-        List<List<UserDO>> clusterList=Lists.newArrayList();
+        List<List<UserDO>> clusterList=Lists.newArrayListWithCapacity(k);
+        for (int i=0;i<k;i++){
+            clusterList.add(Lists.newArrayList());
+        }
         //质心
         List<UserDO> clusterCenteringList=Lists.newArrayList();
         //随机选择初始的质心
@@ -89,7 +93,7 @@ public class KMeansRecommendation {
                     }
                 });
                 Map<Integer, Double> map = Maps.newHashMap();
-                for (int j = 0; j < k; j++) {
+                for (int j = 0; j < k&&j<clusterCenteringList.size(); j++) {
                     double distance = CalDistance(userDOList.get(i), clusterCenteringList.get(j));
                     map.put(j, distance);
                 }
@@ -105,6 +109,7 @@ public class KMeansRecommendation {
             }
             count++;
             System.out.println(count);
+            System.out.println(clusterList);
         }
 
     }
@@ -136,13 +141,16 @@ public class KMeansRecommendation {
         List<UserDO> updateCenterList=Lists.newArrayList();
         UserDO user=new UserDO();
         for (List<UserDO> centerList : clusterList) {
+            if (CollectionUtils.isEmpty(centerList)){
+                continue;
+            }
             int age = 0, sex = 0;
             String profession = null;
             Map<String, Integer> map = Maps.newHashMap();
             for (UserDO userDO : centerList) {
                 age += userDO.getAge();
                 sex += userDO.getSex();
-                if (map.get(userDO.getProfession())==0)
+                if (map.get(userDO.getProfession())==null)
                     map.put(userDO.getProfession(), 1);
                 else
                     map.put(userDO.getProfession(), map.get(userDO.getProfession()) + 1);
@@ -242,6 +250,11 @@ public class KMeansRecommendation {
         List<RecommendDO> recommendDOList=DataHandle();
         List<BookDO> bookDOList = bookDao.listAllBooks();
         Map<Map<String, String>, Double> SimilarityMap = Maps.newHashMap();
+        for (int i=0;i<professionList.size();i++){
+            Map<String, String> map = Maps.newHashMap();
+            map.put(professionList.get(i),professionList.get(i));
+            SimilarityMap.put(map,1.0);
+        }
         for (int i = 0; i < professionList.size(); i++)
             for (int j = i + 1; j < professionList.size(); j++) {
                 //存放两个不同职业对每本书的评分
@@ -263,8 +276,12 @@ public class KMeansRecommendation {
                             totalB++;
                         }
                     }
-                    if (totalA != 0) mapA.put(bookDOList.get(k).getBookName(), sumA / totalA);
-                    if (totalB != 0) mapB.put(bookDOList.get(k).getBookName(), sumB / totalB);
+                    if (totalA != 0){
+                        mapA.put(bookDOList.get(k).getBookName(), sumA / totalA);
+                    }
+                    if (totalB != 0){
+                        mapB.put(bookDOList.get(k).getBookName(), sumB / totalB);
+                    }
                 }
                 //计算这两个职业的相似度
                 //1、求看过的书的交集
@@ -307,6 +324,9 @@ public class KMeansRecommendation {
                     denominatorRight = denominatorRight + (mapB.get(bookName) - averageB) * (mapB.get(bookName) - averageB);
                 }
                 map.put(professionList.get(i), professionList.get(j));
+                Map<String,String>map2=Maps.newHashMap();
+                map2.put(professionList.get(j),professionList.get(i));
+                SimilarityMap.put(map2,molecule / Math.sqrt(denominatorLeft * denominatorRight));
                 System.out.println("molecule:" + molecule);
                 SimilarityMap.put(map, molecule / Math.sqrt(denominatorLeft * denominatorRight));
             }
