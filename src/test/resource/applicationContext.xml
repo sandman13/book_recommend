@@ -62,4 +62,5 @@
         <constructor-arg name="bucketName" value="book-recommendation-photo"></constructor-arg>
     </bean>
 
+
 </beans>

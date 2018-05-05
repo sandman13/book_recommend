@@ -14,8 +14,10 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
@@ -27,6 +29,7 @@ import static com.google.common.collect.Lists.newArrayList;
  * @author hui zhang
  * @date 2018-4-25
  */
+@Component
 public class KMeansRecommendation {
     private static final Logger LOGGER = LoggerFactory.getLogger(KMeansRecommendation.class);
 
@@ -57,6 +60,7 @@ public class KMeansRecommendation {
     */
     public void KmeansRecommend()
     {
+        InitProfession();
         //待分类的原始值
         List<UserDO> userDOList=userDao.listAllUsers();
         //将要分成的类别数
@@ -92,6 +96,7 @@ public class KMeansRecommendation {
                 priorityQueue.addAll(map.entrySet());
                 clusterList.get(priorityQueue.poll().getKey()).add(userDOList.get(i));
             }
+            System.out.println(count);
             List<UserDO> newCenterList = CenterUpdate(clusterList);
             if(isChange(clusterCenteringList,newCenterList))
             {
@@ -99,6 +104,7 @@ public class KMeansRecommendation {
                 clusterCenteringList=newCenterList;
             }
             count++;
+            System.out.println(count);
         }
 
     }
@@ -247,12 +253,12 @@ public class KMeansRecommendation {
                     //书-评分
                     double sumA = 0, sumB = 0;
                     double totalA = 0, totalB = 0;
-                    for (int l = 0; l <recommendDOList.size(); i++) {
+                    for (int l = 0; l <recommendDOList.size(); l++) {
                         String bookName=recommendDOList.get(l).getBookId().substring(0,recommendDOList.get(l).getBookId().indexOf("-"));
-                        if ((bookDOList.get(k).getBookName().equals(bookName))&& (recommendDOList.get(l).getProfession().equals(professionList.get(i)))){
+                        if ((StringUtils.equals(bookDOList.get(k).getBookName(),bookName))&& (StringUtils.equals(recommendDOList.get(l).getProfession(),(professionList.get(i))))){
                             sumA += recommendDOList.get(l).getRate();
                             totalA++;
-                        } else if ((bookName.equals(bookDOList.get(k).getBookName())) && (recommendDOList.get(l).getProfession().equals(professionList.get(j)))) {
+                        } else if ((StringUtils.equals(bookName,(bookDOList.get(k).getBookName()))) && (StringUtils.equals(recommendDOList.get(l).getProfession(),professionList.get(j)))) {
                             sumB +=recommendDOList.get(l).getRate();
                             totalB++;
                         }
@@ -264,7 +270,8 @@ public class KMeansRecommendation {
                 //1、求看过的书的交集
                 Set<String> bookSet = Sets.intersection(mapA.keySet(), mapB.keySet());
                 if (bookSet.size() == 0) {
-                    throw new BusinessException("没有看过相同的书籍");
+                   // throw new BusinessException("没有看过相同的书籍");
+                    return SimilarityMap;
                 }
                 System.out.println("bookSet:" + bookSet);
                 //计算ab的平均值
@@ -310,14 +317,7 @@ public class KMeansRecommendation {
         professionList=Lists.newArrayList();
         professionList.add(0, "IT");
         professionList.add(1, "医生");
-        professionList.add(2, "警察");
-        professionList.add(3, "老师");
-        professionList.add(4, "销售");
-        professionList.add(5, "金融");
-        professionList.add(6, "导演");
-        professionList.add(7, "编辑");
-        professionList.add(8, "厨师");
-        professionList.add(9, "技工");
+        professionList.add(2, "老师");
     }
 
 }
