@@ -32,11 +32,6 @@ public class BorrowDO extends BaseObject {
 
     private int goal;
 
-    private int age;
-
-    private int sex;
-
-    private String profession;
 
     public long getBorrowId() {
         return borrowId;
@@ -118,27 +113,5 @@ public class BorrowDO extends BaseObject {
         this.goal = goal;
     }
 
-    public int getAge() {
-        return age;
-    }
 
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public int getSex() {
-        return sex;
-    }
-
-    public void setSex(int sex) {
-        this.sex = sex;
-    }
-
-    public String getProfession() {
-        return profession;
-    }
-
-    public void setProfession(String profession) {
-        this.profession = profession;
-    }
 }

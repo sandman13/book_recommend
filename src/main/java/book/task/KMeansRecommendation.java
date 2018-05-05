@@ -219,9 +219,9 @@ public class KMeansRecommendation {
             }
             RecommendDO recommendDO = new RecommendDO();
             recommendDO.setUserId(borrowDO.getUserId());
-            recommendDO.setAge(borrowDO.getAge());
-            recommendDO.setSex(borrowDO.getSex());
-            recommendDO.setProfession(borrowDO.getProfession());
+            recommendDO.setAge(userDao.queryByUserId(borrowDO.getUserId()).getAge());
+            recommendDO.setSex(userDao.queryByUserId(borrowDO.getUserId()).getSex());
+            recommendDO.setProfession(userDao.queryByUserId(borrowDO.getUserId()).getProfession());
             recommendDO.setBookId(key);
             recommendDO.setRate(borrowDO.getGoal());
             recommendDOList.add(recommendDO);
