@@ -14,9 +14,12 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -27,6 +30,7 @@ import static com.google.common.collect.Lists.newArrayList;
  * @author hui zhang
  * @date 2018-4-25
  */
+@Component
 public class KMeansRecommendation {
     private static final Logger LOGGER = LoggerFactory.getLogger(KMeansRecommendation.class);
 
@@ -57,6 +61,7 @@ public class KMeansRecommendation {
     */
     public void KmeansRecommend()
     {
+        InitProfession();
         //待分类的原始值
         List<UserDO> userDOList=userDao.listAllUsers();
         //将要分成的类别数
@@ -66,7 +71,10 @@ public class KMeansRecommendation {
         //迭代次数
         int count=1;
         //聚类的结果
-        List<List<UserDO>> clusterList=Lists.newArrayList();
+        List<List<UserDO>> clusterList=Lists.newArrayListWithCapacity(k);
+        for (int i=0;i<k;i++){
+            clusterList.add(Lists.newArrayList());
+        }
         //质心
         List<UserDO> clusterCenteringList=Lists.newArrayList();
         //随机选择初始的质心
@@ -85,13 +93,14 @@ public class KMeansRecommendation {
                     }
                 });
                 Map<Integer, Double> map = Maps.newHashMap();
-                for (int j = 0; j < k; j++) {
+                for (int j = 0; j < k&&j<clusterCenteringList.size(); j++) {
                     double distance = CalDistance(userDOList.get(i), clusterCenteringList.get(j));
                     map.put(j, distance);
                 }
                 priorityQueue.addAll(map.entrySet());
                 clusterList.get(priorityQueue.poll().getKey()).add(userDOList.get(i));
             }
+            System.out.println(count);
             List<UserDO> newCenterList = CenterUpdate(clusterList);
             if(isChange(clusterCenteringList,newCenterList))
             {
@@ -99,6 +108,8 @@ public class KMeansRecommendation {
                 clusterCenteringList=newCenterList;
             }
             count++;
+            System.out.println(count);
+            System.out.println(clusterList);
         }
 
     }
@@ -130,13 +141,16 @@ public class KMeansRecommendation {
         List<UserDO> updateCenterList=Lists.newArrayList();
         UserDO user=new UserDO();
         for (List<UserDO> centerList : clusterList) {
+            if (CollectionUtils.isEmpty(centerList)){
+                continue;
+            }
             int age = 0, sex = 0;
             String profession = null;
             Map<String, Integer> map = Maps.newHashMap();
             for (UserDO userDO : centerList) {
                 age += userDO.getAge();
                 sex += userDO.getSex();
-                if (map.get(userDO.getProfession())==0)
+                if (map.get(userDO.getProfession())==null)
                     map.put(userDO.getProfession(), 1);
                 else
                     map.put(userDO.getProfession(), map.get(userDO.getProfession()) + 1);
@@ -236,6 +250,11 @@ public class KMeansRecommendation {
         List<RecommendDO> recommendDOList=DataHandle();
         List<BookDO> bookDOList = bookDao.listAllBooks();
         Map<Map<String, String>, Double> SimilarityMap = Maps.newHashMap();
+        for (int i=0;i<professionList.size();i++){
+            Map<String, String> map = Maps.newHashMap();
+            map.put(professionList.get(i),professionList.get(i));
+            SimilarityMap.put(map,1.0);
+        }
         for (int i = 0; i < professionList.size(); i++)
             for (int j = i + 1; j < professionList.size(); j++) {
                 //存放两个不同职业对每本书的评分
@@ -247,24 +266,29 @@ public class KMeansRecommendation {
                     //书-评分
                     double sumA = 0, sumB = 0;
                     double totalA = 0, totalB = 0;
-                    for (int l = 0; l <recommendDOList.size(); i++) {
+                    for (int l = 0; l <recommendDOList.size(); l++) {
                         String bookName=recommendDOList.get(l).getBookId().substring(0,recommendDOList.get(l).getBookId().indexOf("-"));
-                        if ((bookDOList.get(k).getBookName().equals(bookName))&& (recommendDOList.get(l).getProfession().equals(professionList.get(i)))){
+                        if ((StringUtils.equals(bookDOList.get(k).getBookName(),bookName))&& (StringUtils.equals(recommendDOList.get(l).getProfession(),(professionList.get(i))))){
                             sumA += recommendDOList.get(l).getRate();
                             totalA++;
-                        } else if ((bookName.equals(bookDOList.get(k).getBookName())) && (recommendDOList.get(l).getProfession().equals(professionList.get(j)))) {
+                        } else if ((StringUtils.equals(bookName,(bookDOList.get(k).getBookName()))) && (StringUtils.equals(recommendDOList.get(l).getProfession(),professionList.get(j)))) {
                             sumB +=recommendDOList.get(l).getRate();
                             totalB++;
                         }
                     }
-                    if (totalA != 0) mapA.put(bookDOList.get(k).getBookName(), sumA / totalA);
-                    if (totalB != 0) mapB.put(bookDOList.get(k).getBookName(), sumB / totalB);
+                    if (totalA != 0){
+                        mapA.put(bookDOList.get(k).getBookName(), sumA / totalA);
+                    }
+                    if (totalB != 0){
+                        mapB.put(bookDOList.get(k).getBookName(), sumB / totalB);
+                    }
                 }
                 //计算这两个职业的相似度
                 //1、求看过的书的交集
                 Set<String> bookSet = Sets.intersection(mapA.keySet(), mapB.keySet());
                 if (bookSet.size() == 0) {
-                    throw new BusinessException("没有看过相同的书籍");
+                   // throw new BusinessException("没有看过相同的书籍");
+                    return SimilarityMap;
                 }
                 System.out.println("bookSet:" + bookSet);
                 //计算ab的平均值
@@ -300,6 +324,9 @@ public class KMeansRecommendation {
                     denominatorRight = denominatorRight + (mapB.get(bookName) - averageB) * (mapB.get(bookName) - averageB);
                 }
                 map.put(professionList.get(i), professionList.get(j));
+                Map<String,String>map2=Maps.newHashMap();
+                map2.put(professionList.get(j),professionList.get(i));
+                SimilarityMap.put(map2,molecule / Math.sqrt(denominatorLeft * denominatorRight));
                 System.out.println("molecule:" + molecule);
                 SimilarityMap.put(map, molecule / Math.sqrt(denominatorLeft * denominatorRight));
             }
@@ -310,14 +337,7 @@ public class KMeansRecommendation {
         professionList=Lists.newArrayList();
         professionList.add(0, "IT");
         professionList.add(1, "医生");
-        professionList.add(2, "警察");
-        professionList.add(3, "老师");
-        professionList.add(4, "销售");
-        professionList.add(5, "金融");
-        professionList.add(6, "导演");
-        professionList.add(7, "编辑");
-        professionList.add(8, "厨师");
-        professionList.add(9, "技工");
+        professionList.add(2, "老师");
     }
 
 }
