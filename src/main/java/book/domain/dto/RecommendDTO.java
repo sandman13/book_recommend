@@ -10,6 +10,7 @@ public class RecommendDTO extends BaseObject{
     private long recommendId;
 
     private long userId;
+
     private String bookName;
 
     private String author;
@@ -20,11 +21,6 @@ public class RecommendDTO extends BaseObject{
 
     private String modifier;
 
-    private int age;
-
-    private int sex;
-
-    private String profession;
 
     public long getRecommendId() {
         return recommendId;
@@ -82,27 +78,4 @@ public class RecommendDTO extends BaseObject{
         this.modifier = modifier;
     }
 
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public int getSex() {
-        return sex;
-    }
-
-    public void setSex(int sex) {
-        this.sex = sex;
-    }
-
-    public String getProfession() {
-        return profession;
-    }
-
-    public void setProfession(String profession) {
-        this.profession = profession;
-    }
 }

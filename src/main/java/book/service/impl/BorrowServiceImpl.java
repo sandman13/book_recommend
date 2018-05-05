@@ -221,9 +221,6 @@ public class BorrowServiceImpl implements BorrowService {
         borrowDTO.setBackDate(DateUtils.format(borrowDO.getBackDate()));
         borrowDTO.setBorrowDate(DateUtils.format(borrowDO.getBorrowDate()));
         borrowDTO.setGoal(borrowDO.getGoal());
-        borrowDTO.setAge(borrowDO.getAge());
-        borrowDTO.setSex(borrowDO.getSex());
-        borrowDTO.setProfession(borrowDO.getProfession());
         return borrowDTO;
     }
 }
