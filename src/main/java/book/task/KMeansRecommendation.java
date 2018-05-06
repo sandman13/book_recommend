@@ -4,13 +4,11 @@ import book.dao.BookDao;
 import book.dao.BorrowDao;
 import book.dao.RecommendDao;
 import book.dao.UserDao;
-import book.domain.dataobject.BookDO;
-import book.domain.dataobject.BorrowDO;
-import book.domain.dataobject.RecommendDO;
-import book.domain.dataobject.UserDO;
+import book.domain.dataobject.*;
 import book.domain.exception.BusinessException;
 import book.util.LoggerUtil;
 import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -57,10 +55,12 @@ public class KMeansRecommendation {
     （相当于一个用户，有多少个职业类别就有多少个用户）对这本书的评分，然后根据皮尔孙系数求相似度；
     3、年龄之间的相似度A：7岁产生代沟的可能性较大，B(u,v)=7/(|Bu-Bv|),当|Bu-Bv|>7时；当|Bu-Bv|≤7时，B(u,v)=1;
     4、性别相似度F：相同为0，不相同为1；
-    5、两个用户之间的距离即为P^2+A^2+F^2;
+    5、两个用户之间的距离即为A+F-P;
     */
     public void KmeansRecommend()
     {
+        LoggerUtil.info(LOGGER,"enter in KmeansRecommend");
+        recommendDao.deleteBefore();
         InitProfession();
         //待分类的原始值
         List<UserDO> userDOList=userDao.listAllUsers();
@@ -86,6 +86,7 @@ public class KMeansRecommendation {
         while(Change&&count<=maxClusterTimes) {
             Change=false;
             for (int i = 0; i < userDOList.size(); i++) {
+                //定义一个最小堆，存放用户到质心的距离
                 PriorityQueue<Map.Entry<Integer, Double>> priorityQueue = new PriorityQueue<Map.Entry<Integer, Double>>(new Comparator<Map.Entry<Integer, Double>>() {
                     @Override
                     public int compare(Map.Entry<Integer, Double> o1, Map.Entry<Integer, Double> o2) {
@@ -98,6 +99,7 @@ public class KMeansRecommendation {
                     map.put(j, distance);
                 }
                 priorityQueue.addAll(map.entrySet());
+                //从堆顶获得最短距离对应的质心下标，将用户加到对应的质心的那一类中
                 clusterList.get(priorityQueue.poll().getKey()).add(userDOList.get(i));
             }
             System.out.println(count);
@@ -109,11 +111,121 @@ public class KMeansRecommendation {
             }
             count++;
             System.out.println(count);
-            System.out.println(clusterList);
         }
-
+        System.out.println(clusterList);
+        //销量的最大堆
+        Queue<Map.Entry<String,Integer>> priorityQueue=new PriorityQueue<>((a,b)->(b.getValue().compareTo(a.getValue())));
+        Map<String, Integer> bookCountMap=CountSale();
+        priorityQueue.addAll(bookCountMap.entrySet());
+        //遍历每一个用户，找出他属于哪一类
+        //对于这一类中其他用户看过的书，求并集去重
+        //然后这些书和他看过的书求差集，存放在最小堆里面
+        for(UserDO userDO:userDOList)
+        {
+            //推荐书籍的数量
+            int recommendCount=0;
+            priorityQueue.clear();
+            //兜底，每次都重新计算借阅量最大堆，防止为这个用户推荐的图书不够三本
+            priorityQueue.addAll(bookCountMap.entrySet());
+            //记录用户所在类的下标
+            int ClusterIndex=0;
+            //扫描每一个类
+            for(int i=0;i<clusterList.size();i++)
+            {
+                //扫描这一类中的用户
+                for(int j=0;j<clusterList.get(i).size();j++)
+                {
+                    if(userDO.getUserId()==clusterList.get(i).get(j).getUserId()) {
+                        ClusterIndex=i;
+                        break;
+                    }
+                }
+            }
+            //存放其他其他用户看过的书：bookName-author集合
+            Set<String> bookSet=Sets.newHashSet();
+            //该用户自己已经看过的书
+            Set<String> MyBookSet=Sets.newHashSet();
+            for(UserDO userDO1:clusterList.get(ClusterIndex))
+            {
+                //计算和该用户同一类的其他用户看过的书籍
+                if(userDO.getUserId()!=userDO1.getUserId())
+                {
+                    List<BorrowDO> borrowDOList=borrowDao.listByUserId(userDO1.getUserId());
+                    for(BorrowDO borrowDO:borrowDOList)
+                    {
+                      BookDO bookDO=bookDao.queryBookByBookId(borrowDO.getBookId());
+                      bookSet.add(Joiner.on("-").skipNulls().join(bookDO.getBookName(),bookDO.getAuthor()));
+                    }
+                }
+                //计算本人已经看过的书籍
+                else
+                {
+                    List<BorrowDO> borrowDOList=borrowDao.listByUserId(userDO.getUserId());
+                    for(BorrowDO borrowDO:borrowDOList)
+                    {
+                        BookDO bookDO=bookDao.queryBookByBookId(borrowDO.getBookId());
+                        MyBookSet.add(Joiner.on("-").skipNulls().join(bookDO.getBookName(),bookDO.getAuthor()));
+                    }
+                }
+            }
+            //求出bookSet中有的而MyBookSet中没有的书
+            bookSet=Sets.difference(bookSet,MyBookSet);
+            List<BookDO> bookDOList=Lists.newArrayList();
+            for(String bookAuthor:bookSet)
+            {
+                //分离出书名和作者
+                Iterator<String> iterator = Splitter.on("-").split(bookAuthor).iterator();
+                List<String> stringList = Lists.newArrayList();
+                while (iterator.hasNext()) {
+                    stringList.add(iterator.next());
+                }
+                //根据书名和作者名查询这本书
+                List<BookDO> bookDOList1=bookDao.listBooksByAuthorAndName(stringList.get(0),stringList.get(1));
+                //若这本书有很多本，只加入第一本书
+                bookDOList.add(bookDOList1.get(0));
+            }
+            List<String>recommendList=Lists.newArrayList();
+            while (recommendCount<bookDOList.size()&& recommendCount< 3) {
+               BookDO bookDO=bookDOList.get(recommendCount);
+                AddToDataBase(bookDO.getBookName(), bookDO.getAuthor(), userDO.getUserId());
+                recommendList.add(Joiner.on("-").skipNulls().join(bookDO.getBookName(),bookDO.getAuthor()));
+                recommendCount++;
+            }
+            //不够的从销量最大堆中取
+            while (recommendCount<3&&!priorityQueue.isEmpty()) {
+                //获取堆顶元素
+                Map.Entry<String, Integer> entry = priorityQueue.poll();
+                String max= entry.getKey();
+                //分离出
+                Iterator<String> iterator = Splitter.on("-").split(max).iterator();
+                List<String> stringList = Lists.newArrayList();
+                while (iterator.hasNext()) {
+                    stringList.add(iterator.next());
+                }
+                //如果这本书已经在推荐列表中，则跳过
+                if (recommendList.contains(Joiner.on("-").skipNulls().join(stringList.get(0),stringList.get(1)))){
+                    continue;
+                }
+                recommendList.add(Joiner.on("-").skipNulls().join(stringList.get(0),stringList.get(1)));
+                AddToDataBase(stringList.get(0), stringList.get(1), userDO.getUserId());
+                count++;
+            }
+        }
     }
 
+    /**
+     * 添加到数据库
+     * @param bookName
+     * @param author
+     * @param userId
+     */
+    public void AddToDataBase(String bookName, String author, long userId) {
+        RecommendationDO recommendationDO = new RecommendationDO();
+        recommendationDO.setUserId(userId);
+        recommendationDO.setBookName(bookName);
+        recommendationDO.setAuthor(author);
+        recommendDao.addRecommendation(recommendationDO);
+    }
 
     /**
      * 判断质心是否还在变化，若还在变化则返回true
@@ -185,8 +297,32 @@ public class KMeansRecommendation {
         map.put(userDOA.getProfession(),userDOB.getProfession());
         double professionRate=SimilarityMap.get(map);
         double sexRate=userDOA.getSex().equals(userDOB.getSex())?1:0;
-        double ageRate=Math.abs(userDOA.getAge()-userDOB.getAge())>7?(7/Math.abs(userDOA.getAge()-userDOB.getAge())):1;
-        return professionRate*professionRate+sexRate*sexRate+ageRate*ageRate;
+        double ageRate=Math.abs(userDOA.getAge()-userDOB.getAge())>7?((double)7/Math.abs(userDOA.getAge()-userDOB.getAge())):1;
+        return -ageRate-sexRate-professionRate;
+    }
+
+    /**
+     * 获得每本书的销量
+     * @return
+     */
+    public Map<String,Integer> CountSale()
+    {
+        Map<String, Integer> bookCountMap = Maps.newHashMap();
+        List<BorrowDO> borrowDOList=borrowDao.listAllBorrows();
+        for(BorrowDO borrowDO:borrowDOList) {
+            BookDO bookDO=bookDao.queryBookByBookId(borrowDO.getBookId());
+            String key = Joiner.on("-").skipNulls().join(bookDO.getBookName(), bookDO.getAuthor());
+            if(bookCountMap.get(key)==null)
+            {
+                bookCountMap.put(key,1);
+            }
+            else
+            {
+                int count = bookCountMap.get(key);
+                bookCountMap.put(key, count + 1);
+            }
+        }
+        return bookCountMap;
     }
     /**
      * 进行数据清洗，bookName-author相同为一本书，
@@ -330,6 +466,7 @@ public class KMeansRecommendation {
                 System.out.println("molecule:" + molecule);
                 SimilarityMap.put(map, molecule / Math.sqrt(denominatorLeft * denominatorRight));
             }
+            System.out.print(SimilarityMap);
             return SimilarityMap;
     }
 
