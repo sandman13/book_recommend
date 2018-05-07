@@ -6,6 +6,7 @@ import book.domain.dto.RecommendDTO;
 import book.service.RecommendService;
 import book.util.LoggerUtil;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author hui zhang
@@ -26,9 +28,9 @@ public class RecommendServiceImpl implements RecommendService {
     private RecommendDao recommendDao;
 
     @Override
-    public List<RecommendDTO> listByUserId(long userId) {
+    public List<RecommendDTO> listByUserId(long userId,int recommendType) {
         LoggerUtil.info(LOGGER, "ENTER IN  RecommendServiceImpl[listByUserId],userId:{0}", userId);
-        return convertToDTOS(recommendDao.listBuUserId(userId));
+        return convertToDTOS(recommendDao.listBuUserId(userId,recommendType));
     }
 
     /**

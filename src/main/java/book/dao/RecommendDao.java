@@ -13,10 +13,10 @@ import java.util.List;
  */
 public interface RecommendDao {
 
-    List<RecommendationDO> listBuUserId(long userId);
+    List<RecommendationDO> listBuUserId(long userId,long recommendType);
 
     long addRecommendation(RecommendationDO recommendationDO);
 
-    boolean deleteBefore();
+    boolean deleteBefore(int type);
 
 }

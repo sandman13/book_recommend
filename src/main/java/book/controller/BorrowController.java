@@ -93,9 +93,11 @@ public class BorrowController {
             }
             LoggerUtil.info(LOGGER, "enter in BorrowController[myBorrow],userId:{0}", userDTO.getUserId());
             List<BorrowDTO> borrowDTOList = borrowService.listByUserId(userDTO.getUserId());
-            List<RecommendDTO> recommendDTOList = recommendService.listByUserId(userDTO.getUserId());
+            List<RecommendDTO> recommendDTOList = recommendService.listByUserId(userDTO.getUserId(),0);
+            List<RecommendDTO> recommendDTOListKmeans=recommendService.listByUserId(userDTO.getUserId(),1);
             model.addAttribute("recommendList",recommendDTOList);
             model.addAttribute("borrowDTOList", borrowDTOList);
+            model.addAttribute("kmeans",recommendDTOListKmeans);
             result.setSuccess(true);
             return "reader_myborrow";
         } catch (BusinessException be) {

@@ -4,11 +4,13 @@ import book.dao.CommonDao;
 import book.dao.RecommendDao;
 import book.domain.dataobject.RecommendationDO;
 import book.util.LoggerUtil;
+import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author hui zhang
@@ -20,9 +22,12 @@ public class RecommendDaoImpl extends CommonDao implements RecommendDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(RecommendDaoImpl.class);
 
     @Override
-    public List<RecommendationDO> listBuUserId(long userId) {
+    public List<RecommendationDO> listBuUserId(long userId,long recommendType) {
         LoggerUtil.info(LOGGER, "enter in RecommendDaoImpl[listByUserId],userId:{0}", userId);
-        return getSqlSession().selectList("recommend.listByUserId",userId);
+        Map<String,String> map= Maps.newHashMap();
+        map.put("userId",String.valueOf(userId));
+        map.put("recommendType",String.valueOf(recommendType));
+        return getSqlSession().selectList("recommend.listByUserId",map);
     }
 
     @Override
@@ -32,8 +37,8 @@ public class RecommendDaoImpl extends CommonDao implements RecommendDao {
     }
 
     @Override
-    public boolean deleteBefore() {
+    public boolean deleteBefore(int type) {
         LoggerUtil.info(LOGGER,"enter in recommendDaoImpl[deleteBefore]");
-        return getSqlSession().delete("recommend.deleteAll")>0;
+        return getSqlSession().delete("recommend.deleteAll",type)>0;
     }
 }

@@ -10,5 +10,5 @@ import java.util.List;
  */
 public interface RecommendService {
 
-   List<RecommendDTO>listByUserId(long userId);
+   List<RecommendDTO>listByUserId(long userId,int recommendType);
 }

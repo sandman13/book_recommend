@@ -59,7 +59,10 @@
             </ul>
             <ul class="nav nav-sidebar">
                 <li class="active"><a href="#">使用knn推荐书籍</a></li>
-                <li><a href="#">待扩展</a></li>
+                <c:forEach var="recommendDTO" items="${kmeans}">
+                    <li><a href="/book/${recommendDTO.bookName}/${recommendDTO.author}">${recommendDTO.bookName}</a>
+                    </li>
+                </c:forEach>
             </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">

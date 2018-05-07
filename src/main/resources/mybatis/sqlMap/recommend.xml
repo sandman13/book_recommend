@@ -15,18 +15,19 @@
         <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified"/>
         <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate"/>
         <result column="modifier" jdbcType="VARCHAR" property="modifier"/>
+        <result column="recommend_type" jdbcType="INTEGER" property="recommendType"/>
     </resultMap>
 
     <insert id="addRecommendation" parameterType="book.domain.dataobject.RecommendationDO" useGeneratedKeys="true" keyProperty="recommendId">
-        INSERT INTO recommend(book_name,author,user_id,gmt_modified,gmt_create,modifier) VALUES(#{bookName},#{author},#{userId},CURRENT_TIMESTAMP ,CURRENT_TIMESTAMP ,#{modifier})
+        INSERT INTO recommend(book_name,author,user_id,gmt_modified,gmt_create,modifier,recommend_type) VALUES(#{bookName},#{author},#{userId},CURRENT_TIMESTAMP ,CURRENT_TIMESTAMP ,#{modifier},#{recommendType})
     </insert>
 
-    <select id="listByUserId" parameterType="long" resultMap="RECOMMEND">
-        SELECT  * FROM  recommend where user_id=#{userId}
+    <select id="listByUserId" parameterType="Map" resultMap="RECOMMEND">
+        SELECT  * FROM  recommend where user_id=#{userId} and recommend_type=#{recommendType}
     </select>
 
     <delete id="deleteAll">
-        DELETE  FROM recommend
+        DELETE  FROM recommend where recommend_type=#{recommendType}
     </delete>
 
 </mapper>
