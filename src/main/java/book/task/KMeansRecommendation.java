@@ -60,7 +60,7 @@ public class KMeansRecommendation {
     public void KmeansRecommend()
     {
         LoggerUtil.info(LOGGER,"enter in KmeansRecommend");
-        recommendDao.deleteBefore();
+        recommendDao.deleteBefore(1);
         InitProfession();
         //待分类的原始值
         List<UserDO> userDOList=userDao.listAllUsers();
@@ -224,6 +224,7 @@ public class KMeansRecommendation {
         recommendationDO.setUserId(userId);
         recommendationDO.setBookName(bookName);
         recommendationDO.setAuthor(author);
+        recommendationDO.setRecommendType(1);
         recommendDao.addRecommendation(recommendationDO);
     }
 

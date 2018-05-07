@@ -72,7 +72,7 @@ public class MyRecommendation {
         //同时还记录上一次修改的位置
         Map<String,Integer> hasSeenTheBook=Maps.newHashMap();
 
-        recommendDao.deleteBefore();
+        recommendDao.deleteBefore(0);
         /**
          * 进行数据清洗，生成处理后的借阅列表
          */
@@ -255,6 +255,7 @@ public class MyRecommendation {
         recommendationDO.setUserId(userId);
         recommendationDO.setBookName(bookName);
         recommendationDO.setAuthor(author);
+        recommendationDO.setRecommendType(0);
         recommendDao.addRecommendation(recommendationDO);
     }
 

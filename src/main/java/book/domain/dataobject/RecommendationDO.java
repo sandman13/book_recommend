@@ -24,6 +24,8 @@ public class RecommendationDO extends BaseObject {
 
     private String modifier;
 
+    private int recommendType;
+
     public long getRecommendId() {
         return recommendId;
     }
@@ -75,6 +77,14 @@ public class RecommendationDO extends BaseObject {
 
     public String getAuthor() {
         return author;
+    }
+
+    public int getRecommendType() {
+        return recommendType;
+    }
+
+    public void setRecommendType(int recommendType) {
+        this.recommendType = recommendType;
     }
 
     public void setAuthor(String author) {

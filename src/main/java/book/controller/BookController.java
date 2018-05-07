@@ -49,10 +49,12 @@ public class BookController {
             }
             List<BookDTO> bookDTOList = bookInfoService.listAllBooks();
             //获取推荐列表
-            List<RecommendDTO> recommendDTOList=recommendService.listByUserId(userDTO.getUserId());
+            List<RecommendDTO> recommendDTOList=recommendService.listByUserId(userDTO.getUserId(),0);
+            List<RecommendDTO>recommendDTOListKmeans=recommendService.listByUserId(userDTO.getUserId(),1);
             model.addAttribute("userDTO", userDTO);
             model.addAttribute("bookList", bookDTOList);
             model.addAttribute("recommendDTOList",recommendDTOList);
+            model.addAttribute("kmeans",recommendDTOListKmeans);
             result.setSuccess(true);
             return "reader_index";
         }catch (BusinessException be){
@@ -110,10 +112,12 @@ public class BookController {
                 return "redirect:/login";
             }
             List<BookDTO> bookDTOList = bookInfoService.listBooksByNameAndAuthor(bookName, author);
-            List<RecommendDTO> recommendDTOList = recommendService.listByUserId(userDTO.getUserId());
+            List<RecommendDTO> recommendDTOList = recommendService.listByUserId(userDTO.getUserId(),0);
+            List<RecommendDTO>recommendDTOListKmeas=recommendService.listByUserId(userDTO.getUserId(),1);
             model.addAttribute("recommendDTOList",recommendDTOList);
             model.addAttribute("userDTO", userDTO);
             model.addAttribute("bookList", bookDTOList);
+            model.addAttribute("kmeans",recommendDTOListKmeas);
             result.setSuccess(true);
             return "reader_detail";
         }catch (BusinessException be){
