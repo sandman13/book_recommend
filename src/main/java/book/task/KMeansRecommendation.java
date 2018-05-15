@@ -208,7 +208,7 @@ public class KMeansRecommendation {
                 }
                 recommendList.add(Joiner.on("-").skipNulls().join(stringList.get(0),stringList.get(1)));
                 AddToDataBase(stringList.get(0), stringList.get(1), userDO.getUserId());
-                count++;
+                recommendCount++;
             }
         }
     }
@@ -404,12 +404,12 @@ public class KMeansRecommendation {
                     double sumA = 0, sumB = 0;
                     double totalA = 0, totalB = 0;
                     for (int l = 0; l <recommendDOList.size(); l++) {
-                        String bookName=recommendDOList.get(l).getBookId().substring(0,recommendDOList.get(l).getBookId().indexOf("-"));
-                        if ((StringUtils.equals(bookDOList.get(k).getBookName(),bookName))&& (StringUtils.equals(recommendDOList.get(l).getProfession(),(professionList.get(i))))){
+                        String bookName = recommendDOList.get(l).getBookId().substring(0, recommendDOList.get(l).getBookId().indexOf("-"));
+                        if ((StringUtils.equals(bookDOList.get(k).getBookName(), bookName)) && (StringUtils.equals(recommendDOList.get(l).getProfession(), (professionList.get(i))))) {
                             sumA += recommendDOList.get(l).getRate();
                             totalA++;
-                        } else if ((StringUtils.equals(bookName,(bookDOList.get(k).getBookName()))) && (StringUtils.equals(recommendDOList.get(l).getProfession(),professionList.get(j)))) {
-                            sumB +=recommendDOList.get(l).getRate();
+                        } else if ((StringUtils.equals(bookName, (bookDOList.get(k).getBookName()))) && (StringUtils.equals(recommendDOList.get(l).getProfession(), professionList.get(j)))) {
+                            sumB += recommendDOList.get(l).getRate();
                             totalB++;
                         }
                     }
@@ -425,7 +425,13 @@ public class KMeansRecommendation {
                 Set<String> bookSet = Sets.intersection(mapA.keySet(), mapB.keySet());
                 if (bookSet.size() == 0) {
                    // throw new BusinessException("没有看过相同的书籍");
-                    return SimilarityMap;
+                    map=Maps.newHashMap();
+                    map.put(professionList.get(j),professionList.get(i));
+                    SimilarityMap.put(map,0.0);
+                    map=Maps.newHashMap();
+                    map.put(professionList.get(i),professionList.get(j));
+                    SimilarityMap.put(map,0.0);
+                    continue;
                 }
                 System.out.println("bookSet:" + bookSet);
                 //计算ab的平均值
